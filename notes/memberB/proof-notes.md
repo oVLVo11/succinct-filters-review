@@ -70,9 +70,15 @@ Thm 12 (Dictionary)
 
 ### 3.3 尚未独立验证的步骤（Q2）
 
-- Claim 13 中“10 次”是否对所有 `initialize/destroy/decrement` 进度同时足够（常数是否随参数变）。
+- Claim 13 中“10 次”是否对所有 `initialize/destroy/decrement` 进度同时足够（常数是否随参数变）。（Day 2 已确认原文确为 10；配平论证仍待 Day 3）
+- Claim 13 不变式 `n∈[2^i,2^{i+1})` 的 `i` 与操作中 `⌈log n⌉` 的对齐（Day 2 记入 questions Q1.5）。
 - 静态 data block 空间从 pocket dictionary 变体到 `n(ℓ − log m + 2 log log log u) + O(m)` 的逐项求和。
 - Dictionary 的 Feistel 论证与“可精确还原键”细节。
 
+### 3.4 Day 2 已核对（构造层）
+
+- 式 (2) 与 FP 并合骨架：§3.1。
+- 新键进 `D_i`、查询四结构、短/长串迁移规则：Claim 13。
+- 8 元素教学示例：见 `construction-notes.md` §6 与 `figures/growth-process.md`。
 
 ---
