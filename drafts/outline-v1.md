@@ -1,7 +1,8 @@
-# Review 提纲 v1
+# Review 提纲 v1.1
 
-日期：2026-07-17  
-状态：Day 1 修订版。根据成员 A 的问题模型笔记、成员 B 的核心技术笔记与相关工作核查问题重写。后续成员 C 完成文献矩阵后，还需要继续细化第 4、12 节。
+初建日期：2026-07-17
+最近更新：2026-07-20
+状态：Day 2 A/B 材料整合版。成员 A 已核查正式模型、Theorem 1/10、参数和下界表述；成员 B 已核查公式 (2)、Claim 13，并完成 8 元素阶段示例。第 4、12 节仍等待成员 C 的文献矩阵，不能视为完成。
 
 ## 0. 小组分工
 
@@ -34,11 +35,15 @@
 
 - 全集 / 键空间 `[u] = {0, ..., u - 1}`。
 - 当前集合 `S subseteq [u]`，当前大小 `n = |S|`。
+- 说明论文按 insertion sequence 划分阶段；若讨论重复插入，需要额外说明“插入次数”与不同 key 数量的关系。
 - 操作：
   - `insert(x)`：插入元素；
   - `lookup(x)`：判断元素是否属于集合。
 - dictionary：精确回答 membership query。
 - filter：对 `x in S` 必须回答 YES；对 `x notin S` 可以以概率至多 `epsilon` 回答 YES。
+- 区分两种概率：
+  - 数据结构报告 failure 的概率；
+  - 无 failure 条件下 filter 的 false positive rate。
 
 ### 3.2 已知容量 `N` 与未知最终规模
 
@@ -64,6 +69,10 @@
 - 本文重要性在于：
   - 把 `log log n` 项的领先常数做到 1；
   - 同时避免 expected amortized insertion，达到以高概率最坏情况常数时间。
+- 谨慎说明：
+  - 本文公式 (2) 解释构造中 `log log n` 如何产生；
+  - “任何 unknown-size filter 都不可避免该项”来自 PSW 信息论下界；
+  - 在没有精读 PSW 原文前，不展开声称其完整证明已经验证。
 
 ## 4. 相关研究与对比框架（陈戚主责，刘威/张书铖协助核查）
 
@@ -133,10 +142,19 @@
 - 非正式结果：维护 approximate membership，误报率 `epsilon`，当前大小 `n > u^0.001` 时使用
   `(1 + o(1)) n (log(1/epsilon) + log log n)` bits。
 - 插入和查询：worst-case constant time with high probability。
-- 需要核查：
-  - `epsilon = o(1)` 的作用；
-  - high probability 的正式失败概率；
-  - `n > u^0.001` 用在哪些证明步骤。
+- 正式 Theorem 10：
+  - `0<epsilon<1`；
+  - `n=omega(log u)` 且 `n<u`；
+  - 主体空间为
+    `n(log(1/epsilon)+log log n+O(log log log u))` bits；
+  - 另有与输入无关的 `u^c` 位预计算空间；
+  - 对任意插入序列，曾报告 failure 的概率至多 `delta=u^{-C}`；
+  - 无 failure 时，每个查询的误报率至多 `epsilon`。
+- Theorem 1 与 Theorem 10 的衔接：
+  - `n>u^0.001` 时，`log log log u=o(log log n)`；
+  - 选 `c<0.001` 时，`u^c=o(n)`；
+  - 因而低阶项可吸收到 `(1+o(1))`。
+- `epsilon=o(1)` 的作用：使 PSW 下界中的 `(1-O(epsilon))` 趋近 1，从而支持“`log log n` 领先常数最优”的表述。
 
 ### 5.2 Dynamic dictionary
 
@@ -155,15 +173,18 @@
 
 ### 6.1 全局哈希与变长前缀
 
-- 使用全局 `k`-wise hash `h` 把 key 映为长二进制串。
+- 使用全局 `(c_1 log u)`-wise independent hash `h:[u]→[u^{c_2}]` 把 key 映为长二进制串。
 - 第 `i` 阶段保存长度约为
-  `ell_i = i + log(1/epsilon) + log i + log log log u + O(1)`
+  `ell_i = i + log(1/epsilon) + log i + log log log u + 2`
   的前缀。
 - 直觉：
+  - 阶段 `i` 中约有 `2^i` 个匹配机会，`i` 抵消这一数量；
   - `i` 约为 `log n`；
   - 前缀越长，误报概率越小；
   - `log i` 对应总误报率并合预算；
   - 最终形成 `log log n` 级别的额外空间。
+- 公式 (2) 的并合骨架：
+  `sum_i 2^i 2^{-ell_i} < epsilon`。
 
 ### 6.2 Filter 到 prefix matching 的化归
 
@@ -182,11 +203,16 @@
 
 - 阶段 `i` 处理大约第 `2^{i-1}+1` 到第 `2^i` 次插入。
 - 活跃结构包括 `T_{i-1}, T_i, D_{i-1}, D_i`。
-- 每次插入后执行常数步维护：
+- 每次插入后将维护过程重复 10 轮：
   - 从旧 truth table 迁移到新 truth table；
   - 从旧 `D` 迁移到新 `D` 或 `T`；
   - 逐步 destroy 旧结构、initialize 下一阶段结构。
 - 目标：扩容过程中仍可查询，且不会出现一次 `Theta(n)` 的慢插入。
+- 8 元素教学示例用于解释：
+  - `n=1,2,3-4,5-8` 时分别使用阶段 `i=0,1,2,3`；
+  - 新前缀默认进入当前 `D_i`；
+  - `T_i` 主要接收迁移得到的短串；
+  - 示例哈希前缀是人为设定，不能用于证明概率。
 
 ### 6.5 Data block 的作用
 
@@ -215,7 +241,11 @@
 - 输入 `x`。
 - 计算当前阶段前缀 `s`。
 - 如果没有更短前缀已存在，则插入 `D_i`。
-- 执行常数次维护步骤，推进旧结构到新结构的迁移。
+- 重复 10 轮维护步骤，推进旧结构到新结构的迁移：
+  - `T_{i-1}` 中取出的串扩展两个孩子写入 `T_i`；
+  - `D_{i-1}` 中取出的串按长度进入 `D_i` 或 `T_i`；
+  - 逐步销毁旧结构并初始化下一层。
+- 待证明：常数 10 为什么足以同时配平 `decrement`、`destroy` 和 `initialize`。
 
 ### 7.3 底层 `D(m, ell)` 的结构
 
@@ -243,6 +273,7 @@
 - 对每个阶段估计碰撞概率。
 - 对所有阶段做 union bound。
 - 前缀长度 `ell_i` 的设置正是为了让总和不超过 `epsilon`。
+- 必须写明该结论是在底层结构没有报告 failure 的条件下成立。
 
 ### 8.3 Prefix matching 正确性
 
@@ -256,16 +287,22 @@
   - 任一已插入串在 `T_{i-1}, T_i, D_{i-1}, D_i` 中至少存在一个可查询表示；
   - 旧结构中元素被迁出后才可删除；
   - 阶段结束前下一阶段结构已准备好。
+- 待核查：
+  - Claim 13 中阶段不变式下标与 `i=ceil(log n)` 的边界对齐；
+  - 每次 10 轮维护的严格进度配平。
 
 ## 9. 空间复杂度证明框架（刘威主责，张书铖协助）
 
-- 代入前缀长度后，每个 key 的主要空间约为：
-  `log(1/epsilon) + log log n`。
+- Lemma 11 给出 prefix matching 空间
+  `n(ell_{ceil(log n)}-log n+O(log log log u))`。
+- 代入前缀长度后得到
+  `n(log(1/epsilon)+log log n+O(log log log u))`。
+- 正式定理还需单列与输入无关的 `u^c` 位预计算空间。
 - truth table 的 `O(n)` 空间需说明为何是低阶或可吸收。
 - `D(m, ell)` 的额外冗余约 `O(log log log u)` / key，需要证明不破坏主项领先常数。
 - 与 PSW 下界对齐：
   - 下界说明 `log log n` 不可避免；
-  - 本文上界把该项领先常数做到 1。
+  - 当 `epsilon=o(1)` 时，本文上界把该项领先常数做到 1。
 
 ## 10. 时间复杂度证明框架（张书铖主责，刘威核查）
 
@@ -288,7 +325,8 @@
 
 ### 11.2 局限与谨慎表述
 
-- 参数条件如 `n > u^0.001` 需要解释。
+- 区分非正式条件 `n>u^0.001` 与正式条件 `n=omega(log u), n<u`。
+- 不隐藏输入无关的 `u^c` 位预计算空间。
 - 模型依赖 RAM、extendable arrays、高独立性哈希或随机化假设。
 - 实现复杂度远高于工程 Bloom filter。
 - 不应写成“全面优于 Bloom filter”；更准确说是在特定理论模型和 unknown-size 目标下取得更强保证。
@@ -315,9 +353,21 @@
   - data block 降低冗余。
 - 小组最终评价应同时说明理论贡献、模型限制和实现复杂度。
 
-## Day 1 后续待补
+## Day 2 整合状态
 
-- 陈戚补全参考文献表和 BibTeX。
-- 张书铖将 `growth-process.md`、`query-insert-flow.md` 转换为正式图或伪代码说明。
-- 刘威在 Day 2 核查正式模型、下界来源、参数限制和 high probability 定义。
-- 三人共同决定是否保留 `discussions/meeting-day*.md`，若不保留，需要在 README 或问题清单中说明讨论记录的新位置。
+### 已完成
+
+- 刘威核查正式模型、Theorem 1/10、参数、failure 与 false positive 的区别；
+- 刘威整理 PSW 下界的可靠表述，并明确完整证明仍待原文核查；
+- 张书铖核查公式 (2)、Claim 13、四结构查询和 10 轮维护；
+- 张书铖完成 8 元素阶段增长示例及查询/插入文字流程图；
+- A、B 的材料已汇总到 `discussions/meeting-day2.md`。
+
+### 进入 Day 3 前待补
+
+- 陈戚补全相关工作笔记、来源、BibTeX 和 `references/literature-matrix.md`；
+- 陈戚审阅 B 的 8 元素示例；
+- 刘威对 B 的示例留下正式审阅结论；
+- 张书铖复核 A 对 Day 2 审阅意见的修改；
+- 解决 Claim 13 下标对齐和常数 10 的配平问题；
+- 开始拆解底层 `D(m,ell)`、truth table 和 data block。

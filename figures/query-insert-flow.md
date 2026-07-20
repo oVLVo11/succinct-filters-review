@@ -1,19 +1,20 @@
-# 查询 / 插入流程
+# 查询 / 插入流程（与 8 元素示例一致）
 
-> 来源：论文 §3.1、Claim 13。  
+> 来源：§3.1、Claim 13。  
+> 与 `notes/memberB/construction-notes.md` §6、`figures/growth-process.md` 同步。
 
 ---
 
-## A. Lookup(y) — Filter 层
+## A. Lookup(y)
 
 ```text
 输入 y ∈ [u]
    │
    ▼
-计算 h(y)          （全局哈希）
+h(y) ← 全局哈希
    │
    ▼
-设 i ← ⌈log n⌉     （当前阶段）
+i ← ⌈log n⌉
    │
    ├─► query(D_{i-1}, h(y))
    ├─► query(D_i,     h(y))
@@ -21,69 +22,47 @@
    └─► query(T_i,     h(y) 的前 i 位)
    │
    ▼
-任一返回 YES ⇒ 输出 YES
-全部 NO     ⇒ 输出 NO
+任一 YES → YES；全 NO → NO
 ```
 
-**性质（失败未发生时）**
+8 元素对照：
 
-- 真成员：其插入时前缀仍在某个 `T` 或 `D` 中 ⇒ 无 FN。
-- 非成员：误报由各阶段前缀碰撞并合控制 ≤ `ε`。
-- 时间：只碰常数个结构 ⇒ `O(1)`。
+| 当前 n | i | 实际检查 |
+|---|---|---|
+| 1 | 0 | `D0, T0` |
+| 2 | 1 | `D0,D1,T0,T1` |
+| 3–4 | 2 | `D1,D2,T1,T2` |
+| 5–8 | 3 | `D2,D3,T2,T3` |
+
+失败未发生时：无 FN；FP ≤ `ε`；时间 `O(1)`。
 
 ---
 
-## B. Insert(x) — Filter / Prefix-matching 层
+## B. Insert（第 n 个元素）
 
 ```text
-输入 x（第 n 次插入），i ← ⌈log n⌉
-   │
-   ▼
-取前缀 s ← h(x) 的前 ℓ_i 位
-   │
-   ▼
-若还没有 s 的更短前缀已在库中:
-      insert(D_i, s)     （若失败则报告 failure）
-   │
-   ▼
-重复约 10 次 MaintainStep():     ← 去均摊关键
-   │
-   ├─ (1) 若 T_{i-1} 非空:
-   │       y ← decrement(T_{i-1})
-   │       若得到 y: insert(T_i, y∘0) 与 insert(T_i, y∘1)
-   │
-   ├─ (2) 若 D_{i-1} 非空:
-   │       y ← decrement(D_{i-1})
-   │       若得到 y:
-   │          |y| > i  → insert(D_i, y)
-   │          否则     → insert(T_i, y)
-   │
-   ├─ (3) 若旧结构已空但未销毁 → destroy(...)
-   │
-   └─ (4) 若旧结构已销毁 → initialize(T_{i+1}) / initialize(D_{i+1})
+i ← ⌈log n⌉
+s ← h(x) 的前 ℓ_i 位
+若尚无 s 的前缀在库中:
+      insert(D_i, s)          ← 新元素默认进 D_i（不是 T_i）
+
+重复 10 次:                   ← Claim 13 原文 “for 10 times”
+  (1) T_{i-1} 非空 → decrement；若得 y → insert(T_i, y∘0) 与 y∘1
+  (2) D_{i-1} 非空 → decrement；若得 y →
+        |y| > i → insert(D_i, y)
+        否则     → insert(T_i, y)
+  (3) 旧空未销毁 → destroy
+  (4) 旧已销毁   → initialize(T_{i+1} / D_{i+1})
 ```
 
-
- `initialize` / `destroy` 本身也是“调用很多次才完成”，进度摊到各次插入。
- 因此单次 Insert 的 wall-clock 步数为常数，同时推进迁移。
+`initialize` / `destroy` 本身也需多次调用；进度摊在各次插入上。
 
 ---
 
-## C. 底层 `D(m, ℓ)` 内的 Insert/Query
+## C. 底层 `D(m,ℓ)`（Day 3，此处仅接口）
 
 ```text
-Insert into D:
-  x → st(x) 选 subtable
-    → 写入最新 dynamic data block
-    → 更新 adaptive prefixes / indicators / buffers
-    → 若块满：启动重组，后续每次插入推进常数步排序/写回静态块
-
-Query in D:
-  x → st(x) 选 subtable
-    → adaptive prefixes 找到候选唯一前缀
-    → navigator / indicator 定位 data block（静态或动态）
-    → 在块内解码比对 rt 等字段
-    → 返回是否存在前缀匹配
+Insert/Query into D:
+  按 st(x) 进 subtable → adaptive prefixes → data block
+  （细节见 §5；本图不展开）
 ```
-
----

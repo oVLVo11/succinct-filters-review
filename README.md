@@ -26,14 +26,17 @@
 
 ## 当前进度
 
-目前处于 Day 1 / Day 2 早期阶段：
+目前处于 Day 2 收尾阶段：
 
 - 已创建 GitHub 仓库并建立初始版本历史。
 - 已保存论文 PDF、课程要求和工作计划。
-- 已完成成员 A、B 的第一轮阅读笔记和技术提纲材料。
-- 已整理初版 review 提纲：`drafts/outline-v1.md`。
-- 已建立问题清单：`discussions/questions.md`。
+- 成员 A 已完成正式模型、Theorem 1/10 参数、空间下界和高概率语义的 Day 2 核查。
+- 成员 B 已完成公式 (2)、Claim 13、8 元素阶段示例及查询/插入流程的 Day 2 核查。
+- 已将 A/B 阶段结论汇总到 `discussions/meeting-day2.md`。
+- 已将 review 提纲更新为 Day 2 A/B 材料整合版：`drafts/outline-v1.md`。
+- 已按 Q0-Q4 更新问题清单：`discussions/questions.md`。
 - 已建立 AI 使用记录目录：`ai-usage/`。
+- 成员 C 的相关工作笔记、来源清单和文献矩阵仍待补齐，因此 Day 2 尚未三人完整验收。
 
 ## 仓库结构
 
@@ -47,6 +50,7 @@
 │   ├── member-A-log.md
 │   └── member-B-log.md
 ├── discussions/
+│   ├── meeting-day2.md
 │   └── questions.md
 ├── drafts/
 │   └── outline-v1.md
@@ -135,6 +139,8 @@ git pull
 
 - 陈戚补充 `notes/memberC/` 中的相关研究笔记。
 - 建立 `references/bibliography.bib`、`references/source-list.md`、`references/literature-matrix.md`。
-- 将 `figures/` 中的文字版流程说明转为正式图。
-- 将 `drafts/outline-v1.md` 逐步扩展为分章节草稿。
-- Day 3 前解决 `discussions/questions.md` 中 Q2/Q4 级别问题。
+- 陈戚审阅张书铖的 8 元素示例，刘威审阅相关工作矩阵。
+- 刘威正式审阅张书铖的阶段示例，张书铖复核刘威对审阅意见的修改。
+- Day 3 解决 Claim 13 下标对齐、常数 10 配平及底层 `D(m,ell)` 的 Q1/Q2 问题。
+- 将 `figures/` 中已经同步的文字流程说明逐步转为正式图。
+- 在证据核查完成后，将 `drafts/outline-v1.md` 逐步扩展为分章节草稿。
