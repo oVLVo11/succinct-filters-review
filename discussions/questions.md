@@ -216,3 +216,33 @@ Day 2 原有分歧“第 n 次插入与 `n=|S|` 是否混用”已转入 Q1.5：
 - 依赖图补注：`figures/proof-dependency.md`
 - 审阅：`discussions/review-day3-B.md`
 - 会议：`discussions/meeting-day3.md`
+
+---
+
+## Day 4：张书铖（B）更新（2026-07-22）
+
+### 产物
+
+- 伪代码：`notes/memberB/pseudocode.md`
+- 无 FN / 时间证明框架：`notes/memberB/proof-notes.md`
+- 共同证明表（B 列）：`notes/proof-table.md`
+- 审阅 A：`discussions/review-day4.md`
+- 会议 B 部分：`discussions/meeting-day4.md`
+
+### Q 状态
+
+| 项 | 原状态 | Day 4 | 说明 |
+|---|---|---|---|
+| PSW `gamma` 复算 | Q1 | **Q0（机制）** | 与 A §14 一致；Review 措辞仍由 A/C |
+| 查询/插入 O(1) 控制流 | — | **Q0** | 四 query；1+10 轮维护 |
+| 无 FN 控制流 | — | **Q0** | 迁移不丢串+四结构 |
+| 无 FN 形式存储归纳 | Q3 | **仍 Q1/Q3** | 阻塞“已证不变式”正文；issue-stage-index |
+| 字面常数 10 | Q3 | **仍 Q3** | 不阻塞；issue-constant-10 |
+| `D` 长串 prefix 位级 | Q1/Q2 | **仍 Q2** | Day 5 前可不写进实现章细节 |
+| 式 (3)(4)(5) | Q1 | **待 A** | B 只标事件落点 |
+
+### 阻塞 Day 5 的项
+
+- 若章节声称“Claim 13 存储不变式已严格证明”→ 必须先关闭 issue-stage-index。  
+- 伪代码控制流、无 FN 直觉、时间 O(1) 框架：**可进入 Day 5 草稿**，并标注条件 `¬failed` 与 Q3。
+
