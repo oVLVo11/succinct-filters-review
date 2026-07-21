@@ -60,6 +60,63 @@ ai-log(A): record AI-assisted day 1 setup
 
 ---
 
+## 2026-07-21（Day 3）
+
+### 使用者
+
+刘威
+
+### 使用工具与目的
+
+Codex / ChatGPT、本地 PDF 文本提取、PDF 页面渲染与视觉核对。用途是协助定位引理、整理依赖关系、复算空间项，并发现需要人工复核的原文细节；不作为最终 Review 正文直接提交。
+
+### 原始任务
+
+“完成 A 的 Day3 相关工作，完成后告知修改了哪些文件，提供给我进行审核。”
+
+### 实际读取材料
+
+- `AGENTS.md`、`Plan.md`、`work/day1.md`、`work/day2.md`、`work/day3.md`；
+- A 的 `definitions.md`、`lower-bound-notes.md`、`paper-reading.md`；
+- B 的 `construction-notes.md`、增长图和查询/插入流程图；
+- `discussions/questions.md`、`discussions/meeting-day2.md`；
+- 原论文 PDF 第 8--13 页及第 5 节相关文本，重点核查 Theorem 7--10、Lemma 11、Claim 13、公式 (2)--(3)。
+
+### AI 辅助形成的内容
+
+1. 新建 A 的引理依赖、空间分解和随机性假设笔记；
+2. 新建证明依赖图初稿；
+3. 续写 PSW 下界核查边界；
+4. 对 B 的 8 元素示例作正式审阅；
+5. 识别 Claim 13 阶段区间与 `ceil(log n)` 的下标不一致风险；
+6. 判断“常数轮迁移”的渐近机制可理解，但无法从 `O(m)` 黑盒接口推出字面常数 10 的完整常数配平。
+
+### 人工核查方式
+
+审核者应逐项对照：
+
+- 第 8 页 Theorem 7、8：有限独立哈希与 Chernoff 前提；
+- 第 9 页 Theorem 9、10：adaptive prefixes 和正式 filter 保证；
+- 第 10 页公式 (2)、Lemma 11：误报求和与 prefix matching 空间；
+- 第 11--12 页 `D(m,ell)` 接口：空间、failure、decrement、初始化/销毁调用次数；
+- 第 12--13 页 Claim 13：四步维护、常数 10、阶段区间和查询下标；
+- 第 13 页公式 (3) 及第 5 节：底层 failure 的来源。
+
+还需另行取得 PSW [28] 原文后核查完整下界证明。本次没有从摘要或 AI 推测补写该证明。
+
+### 当前判断
+
+Theorem 10 上界依赖链、空间主项/低阶项和两类概率的区分已由本地 PDF 核对。Claim 13 的下标和字面常数配平仍标为 Q3；这两点不得在人工复核前写成已解决。
+
+### 最终使用方式
+
+- 作为刘威 Day 3 个人精读记录；
+- 作为 A/B 共同证明表和组会讨论的输入；
+- 作为后续 Review “空间与正确性证明”部分的事实清单；
+- 经成员本人和交叉审阅确认后再改写，不直接复制为终稿。
+
+---
+
 ## 2026-07-20（Day 2）
 
 ### 使用者
@@ -248,4 +305,38 @@ notes/memberA/definitions.md
 notes/memberA/lower-bound-notes.md
 ```
 
-```
+---
+
+## 2026-07-21（Day 3，PSW 原文补充核查）
+
+### 使用者与任务
+
+刘威。继续完善 A 的 Day3 工作。
+
+### 使用工具
+
+Codex / ChatGPT、本地 PDF 文本提取、逐页渲染和视觉核对。PDF 页面只用于定位和核对公式，没有把 AI 生成内容当作原文引用。
+
+### 实际核查范围
+
+- PSW §1.3 的 lower-bound intuition；
+- §3 The Lower Bound: From Approximate Membership to Compression；
+- 第 7 页 Theorem 3.1；
+- 第 8--10 页 Lemma 3.2、3.3、3.4、式 (3.1)、式 (3.2) 及最终编码不等式；
+- Theorem 3.1 到 Theorem 1.1 的 `alpha`、`gamma` 参数代入。
+
+### AI 回答摘要
+
+AI 将下界证明整理为五步：固定随机性、选择正回答集合增长较小的几何块、控制块内旧误报、用中间状态编码、利用 `u^n/3` 条序列的计数下界导出状态空间下界。随后解释 `log log n` 来自对小增量候选集合大小取对数，而不是来自本文上界构造的阶段数本身。
+
+### 人工核查方式与结论
+
+已对 PSW PDF 第 7--10 页进行文本和页面图像交叉核对。Theorem 3.1 的条件、`1-1/gamma`、`1-9epsilon`、Lemma 3.2 的 `u^n/2`、Lemma 3.4 的 `u^n/3`、式 (3.2) 和最终 `b_i` 下界均已回到原页确认。
+
+仍需组员独立复算：让 `gamma` 随 `n` 缓慢增长时，如何把参数化定理写成 Liu--Yin--Yu 使用的精细 `(1-O(epsilon))` 领先系数。PSW Theorem 1.1 字面只陈述 `Omega(n log log n)`，笔记已明确区分。
+
+### 修改用途
+
+- 完善 `notes/memberA/lower-bound-notes.md` §14；
+- 更新 A 的依赖笔记、阅读记录、证明依赖图和问题状态；
+- 作为后续人工撰写证明解释的事实底稿，不直接复制为最终 Review。

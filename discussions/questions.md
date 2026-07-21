@@ -119,3 +119,130 @@ Day 2 原有分歧“第 n 次插入与 `n=|S|` 是否混用”已转入 Q1.5：
 2. Quotient/cuckoo filter 是否依赖容量或负载上界？
 3. 2020 年后是否有直接引用、改进或否定本文结果的研究？
 4. 各相关结构的空间和时间保证属于 worst-case、expected 还是 amortized？
+
+---
+
+## Day 3：刘威（A）核查更新（2026-07-21）
+
+### 转入 Q0
+
+1. **Theorem 7/8/9 -> `D(m,ell)` -> Claim 13 -> Lemma 11 -> Theorem 10 的依赖方向。**
+   - 已按原论文第 8--13 页核实并记录于 `notes/memberA/lemma-dependency-and-space.md`。
+2. **Truth table 和相邻容量元数据为何只贡献 `O(n)` 量级。**
+   - 相邻两个二次幂容量求和为 `O(n)`；该结论解释量级，但不替代位级峰值证明。
+3. **B 的 8 元素示例是否可作为教学例子。**
+   - 有条件通过：可解释 `ceil(log n)` 版操作控制流，不可证明概率、空间领先常数或一般迁移配平。
+
+### Q1 保留
+
+1. **PSW 下界的完整证明。**
+   - 本地仅有本文 PDF；本文引用结论但未重证。编码对象、关键规模和误报集合仍须阅读 [28] 原文。
+   - 负责人：刘威；文献核验：陈戚。
+2. **第 5 节全部 failure 事件如何汇总。**
+   - 已核查公式 (3) 的负载事件与 Theorem 8 关系；公式 (4)(5)、fingerprint 和 navigator 事件待 Day 4 逐项完成。
+   - 负责人：刘威、张书铖。
+
+### Q2 状态调整
+
+1. **常数 10 为什么足够？**
+   - 机制已理解：一个 `Theta(2^i)` 长阶段内，每次常数轮维护提供 `Theta(2^i)` 次调用，能渐进覆盖线性迁移工作。
+   - 但黑盒接口只给 initialize/destroy 为 `O(m)` 次，隐藏常数未展开，不能推出字面常数 10 的严格配平。
+   - 从 Q2 转为 Q3（论文可能省略常数细节）。
+2. **`D(m,ell)` 为何支持长串 prefix matching？**
+   - 接口层已理解：它直接提供 `query(D,x)` 判断是否存在前缀；内部由 main table、subtable、adaptive prefixes/data blocks 实现。
+   - 位级实现尚未全部展开，转为 Q1/Q3，B 主查、A 复核空间接口。
+3. **Data block 每 key `O(log log log u)` 冗余。**
+   - 仍为 Q2，属于第 5 节底层构造，A 本日只确认其在空间式中的位置，未完成实现证明。
+
+### 新增或重写 Q3
+
+1. **Claim 13 阶段下标冲突。**
+   - 插入/查询令 `i=ceil(log n)`；证明段又写 `n in [2^i,2^{i+1})` 时使用第 `i-1/i` 层。例如 `n=3` 时两种写法给出不同层号。
+   - 临时处理：教学图按明确的插入/查询语句绘制；正式归纳证明不得在未统一变量前关闭。
+   - 负责人：张书铖；复核人：刘威。
+2. **字面常数 10 的隐藏常数配平。**
+   - 可证明常数轮渐近足够；无法由当前 `O(m)` 接口推出恰好 10。
+3. **迁移瞬间位级空间峰值。**
+   - 相邻层容量和为 `O(n)` 已确认；succinct 领先常数仍需结合 `decrement` 释放空间和第 5 节编码逐项核查。
+4. **对手模型。**
+   - 全文未找到 `oblivious adversary` 明文；定理对任意给定插入序列、以预计算随机比特为概率空间。是否覆盖 adaptive adversary 不作未经证明的扩展。
+
+### 交叉审阅记录
+
+刘威对张书铖材料的四条正式意见见 `discussions/review-day3-A.md`；需由 B 留下接受/修改/反驳及证据后关闭。
+
+### PSW 原文加入后的状态更新（2026-07-21）
+
+原 Q1“PSW 下界完整证明”转入 Q0。依据：仓库 `1304.1188v2.pdf` 第 7--10 页 Theorem 3.1、Lemma 3.2--3.4。
+
+已核实的证明链：
+
+1. 用 averaging/Markov 固定内部随机串，同时为至少一半插入序列保持正回答集合测度 `O(epsilon)`；
+2. 将序列分成大小 `gamma^i` 的几何块，用抽屉原理选择正回答集合增长很小的一块；
+3. 用 Chernoff 和 union bound 保证至少 `u^n/3` 条序列在该块开始前只有至多 `9epsilon` 比例的旧误报；
+4. 保存块编号、块外元素、位置 bitmap、中间状态，并相对编码块内元素；
+5. 若状态太小，总编码会短于 `log(u^n/3)`，产生计数矛盾；
+6. 取 `alpha=1/sqrt(n)` 和适当增长的 `gamma`，得到额外 `Omega(n log log n)`，精细形式含 `(1-O(epsilon))` 系数。
+
+新的核查点降为 Q1：由 Theorem 3.1 参数化公式写成 Liu--Yin--Yu 文中的精细领先系数时，请 B 独立复算 `gamma` 的选择，C 核查引用表述。A 的详细推导见 `notes/memberA/lower-bound-notes.md` §14。
+
+---
+
+## Day 3：张书铖（B）核查更新（2026-07-21）
+
+### 转入 / 维持 Q0
+
+1. **十组件接口层拆解**（哈希、变长前缀、prefix matching、四结构、迁移去向、`D(m,ℓ)` 黑盒接口）：见 `notes/memberB/core-components.md`。
+2. **A 审阅四条**：全部接受；示例区分“查询活跃 / 已初始化”；证明边界写入笔记。
+3. **Q1.5（重复插入与 n=|S|）**：复核 A 的 insertion-sequence 表述，**关闭分歧**。
+
+### Q1 更新
+
+1. **阶段下标**：升格为有明确临时变量的 Q1/Q3 混合项；操作跟 `i★`，存储归纳未关闭。负责人 B，复核 A，截止 Day 4。Issue：`discussions/issues/issue-stage-index.md`。
+2. **`D(m,ℓ)` 长串 prefix matching**：接口层 Q0；§5 位级为何“membership 即 prefix matching”仍为 Q1/Q2。负责人 B，Day 4。
+3. **PSW `gamma` 复算**：接受 A 安排，Day 4 独立复算后回报。
+
+### Q2 / Q3
+
+1. **常数 10**：维持 A 的判断——机制 Q1/渐近可讲，字面配平 **Q3**。Issue：`discussions/issues/issue-constant-10.md`。
+2. **Data block `O(log log log u)`**：仍 Q2，Day 4 与 failure 式 (3)(4)(5) 一起攻。
+3. **空间峰值**：仍 Q3，与 A 空间笔记对齐。
+
+### 产物指针
+
+- 组件：`notes/memberB/core-components.md`
+- 结构图：`figures/architecture.md`
+- 流程：`figures/query-insert-flow.md`
+- 依赖图补注：`figures/proof-dependency.md`
+- 审阅：`discussions/review-day3-B.md`
+- 会议：`discussions/meeting-day3.md`
+
+---
+
+## Day 4：张书铖（B）更新（2026-07-22）
+
+### 产物
+
+- 伪代码：`notes/memberB/pseudocode.md`
+- 无 FN / 时间证明框架：`notes/memberB/proof-notes.md`
+- 共同证明表（B 列）：`notes/proof-table.md`
+- 审阅 A：`discussions/review-day4.md`
+- 会议 B 部分：`discussions/meeting-day4.md`
+
+### Q 状态
+
+| 项 | 原状态 | Day 4 | 说明 |
+|---|---|---|---|
+| PSW `gamma` 复算 | Q1 | **Q0（机制）** | 与 A §14 一致；Review 措辞仍由 A/C |
+| 查询/插入 O(1) 控制流 | — | **Q0** | 四 query；1+10 轮维护 |
+| 无 FN 控制流 | — | **Q0** | 迁移不丢串+四结构 |
+| 无 FN 形式存储归纳 | Q3 | **仍 Q1/Q3** | 阻塞“已证不变式”正文；issue-stage-index |
+| 字面常数 10 | Q3 | **仍 Q3** | 不阻塞；issue-constant-10 |
+| `D` 长串 prefix 位级 | Q1/Q2 | **仍 Q2** | Day 5 前可不写进实现章细节 |
+| 式 (3)(4)(5) | Q1 | **待 A** | B 只标事件落点 |
+
+### 阻塞 Day 5 的项
+
+- 若章节声称“Claim 13 存储不变式已严格证明”→ 必须先关闭 issue-stage-index。  
+- 伪代码控制流、无 FN 直觉、时间 O(1) 框架：**可进入 Day 5 草稿**，并标注条件 `¬failed` 与 Q3。
+

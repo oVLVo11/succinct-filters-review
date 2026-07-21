@@ -72,14 +72,7 @@ log i ≈ log log n
 “本文的分阶段做法要付 `log log n`”并不能推出“所有算法都必须付 `log log n`”。也许存在完全不同、不要阶段的结构。
 
 PSW 下界排除了这种希望：只要空间必须适应当前 `n`，任何 filter 都要付近似 `log log n` 的额外信息。
-
-因此写 Review 时应避免以下不严谨说法：
-
-> 因为本文用了多个阶段，所以 `log log n` 不可避免。
-
-更严谨的说法是：
-
-> 本文构造中的阶段误报预算解释了上界为何出现 `log log n`；PSW 的独立信息论下界进一步证明，这一量级不是本文构造造成的浪费。
+本文构造中的阶段误报预算解释了上界为何出现 `log log n`；PSW 的独立信息论下界进一步证明，这一量级不是本文构造造成的浪费。
 
 ---
 
@@ -301,3 +294,231 @@ log log log u / log log n → 0
 5. 区分“论文理论模型中的预计算空间”与“实际实现中的内存开销”。
 
 在这些步骤完成前，不把下界的完整证明或实际工程优越性写成已验证结论。
+
+---
+
+## 13. Day 3 首轮续查：下界材料能推进到哪里
+
+日期：2026-07-21
+
+### 13.1 本次重新核查的本文陈述
+
+本论文对 PSW [28] 的使用仍是“引用其结论”，并没有在正文或附录重证编码下界。可由本文再次确认：
+
+1. 下界对象是空间随当前规模变化的 unknown-size filter；
+2. 下界为 `(1-o(1))n(log(1/epsilon)+(1-O(epsilon))log log n)`；
+3. 该下界不以插入/查询时间为前提；
+4. 本文上界中 `log log n` 的领先常数在 `epsilon=o(1)` 时与该下界对齐；
+5. 公式 (2) 只解释本文上界的 `log log n` 来源，不能替代 PSW 的普遍下界证明。
+
+### 13.2 本次没有伪造的“完整证明”
+
+当前仓库只有本论文 PDF，没有 PSW [28] 原文。因而以下问题仍不能标成已核实：编码对象如何选取、在哪些规模快照取状态、如何由误报集合恢复信息、`(1-O(epsilon))` 的常数如何进入计数。
+
+Day 3 的正确处理不是根据摘要补出一份看似完整的证明，而是保留原始文献核查任务。后续由 A 主读 PSW 正文、C 核查出版信息和版本，再由 B 从数据结构模型角度复核下界假设是否与本文一致。
+
+### 13.3 与本论文上界证明的关系
+
+PSW 下界并不参与 Theorem 10 的正确性推导；它用于说明 Theorem 10 空间上界为何重要、在什么参数范围内称得上最优。因此证明依赖图将 PSW 放在“优越性/最优性比较”而不是“构造正确性”的依赖链中。
+
+**首轮状态：Q1 保留。** 当时结论已确认，但完整证明尚未核查。
+
+---
+
+## 14. Day 3 二轮续查：PSW 原文下界证明
+
+新增来源：Rasmus Pagh、Gil Segev、Udi Wieder，*How to Approximate a Set without Knowing Its Size in Advance*，FOCS 2013；仓库文件 `1304.1188v2.pdf`。
+精读范围：§1.3 的证明直觉、§3 The Lower Bound、Theorem 3.1、Lemma 3.2--3.4，PDF 第 3--4、7--10 页。
+
+### 14.1 正式定理
+
+设 unknown-size approximate membership 结构为 `D`，全集 `U` 大小为 `u`，误报率 `0<epsilon<1`。Theorem 3.1 设：
+
+```text
+n <= epsilon*u，n 充分大；
+1/sqrt(n) <= alpha < 1；
+gamma >= 2 为整数。
+```
+
+如果对任意长度 `m` 满足 `alpha*n < m < n` 的插入序列，结构都只使用至多 `beta*m` 位，那么：
+
+```text
+beta >= (1-1/gamma) *
+        (log(1/epsilon)
+         +(1-9epsilon) log log_gamma(1/alpha)
+         -Theta(1)).
+```
+
+原文位置：PSW PDF 第 7 页 Theorem 3.1。
+
+这个定理证明：如果结构要在一整个规模区间内都维持每元素至多 `beta` 位，那么 `beta` 必须包含额外双重对数项。等价地，在处理一条不太短的在线插入序列时，至少存在某个中间时刻达到该成本。
+
+### 14.2 第一步：固定内部随机性
+
+对固定随机串 `r` 和插入序列 `S`，令：
+
+```text
+hat(S)_r = 处理 S 后，结构回答 YES 的所有 universe 元素组成的集合；
+mu(hat(S)_r) = |hat(S)_r|/u。
+```
+
+无 false negative 保证 `S` 中元素都在 `hat(S)_r` 中。误报率至多 `epsilon`，加上真实成员所占比例，得到：
+
+```text
+E_r[mu(hat(S)_r)] <= epsilon+n/u <= 2epsilon，
+```
+
+最后一步使用 `n<=epsilon*u`。由 Markov 不等式，对每个 `S`，至少一半随机串使 `mu(hat(S)_r)<4epsilon`。交换平均次序后，可固定一个随机串 `r*`，使至少一半长度 `n` 的序列满足：
+
+```text
+|S_{r*,epsilon}| >= u^n/2。
+```
+
+接下来只需对确定性结构 `B_{r*}` 做编码论证，同时仍保留指数级多的待编码序列。
+
+原文位置：PSW PDF 第 8 页 Lemma 3.2。
+
+### 14.3 第二步：按几何块切分序列
+
+把序列分成连续块：
+
+```text
+S = C_1,C_2,...，其中 |C_i|=gamma^i；
+S_i = 前 i 个块拼接成的前缀；
+n_i = |S_i|。
+```
+
+没有漏报使正回答集合单调增长。从规模 `alpha*n` 到 `n` 之间约有 `log_gamma(1/alpha)` 个候选块，而正回答集合总测度至多 `4epsilon`。抽屉原理保证存在一个块 `C_i`，使：
+
+```text
+mu(hat(S)_i)-mu(hat(S)_{i-1})
+    <= 4epsilon/(log_gamma(1/alpha)-2)。
+```
+
+Lemma 3.3 找的是“正回答集合新增测度小的块”。额外的 `log log_gamma(1/alpha)` 正是对这个小增量取对数产生的。
+
+原文位置：PSW PDF 第 8--9 页 Lemma 3.3。
+
+### 14.4 第三步：控制块中的旧误报
+
+令：
+
+```text
+k = |C_i intersect hat(S)_{i-1}|，
+```
+
+即真正插入 `C_i` 前已经被回答 YES 的块内元素数。Lemma 3.4 证明，对至少 `u^n/3` 条序列有：
+
+```text
+k <= 9epsilon*|C_i|。
+```
+
+证明从整个 `U^n` 独立均匀采样以避免条件依赖，对每个足够大的块用 Chernoff 界，再对各块使用 union bound；最后与 Lemma 3.2 保留的序列集合相交。
+
+原文位置：PSW PDF 第 9 页 Lemma 3.4、式 (3.1)。
+
+### 14.5 第四步：用中间状态编码序列
+
+对上述好序列，编码器写入：
+
+1. Lemma 3.3 选出的块编号 `i`；
+2. 除 `C_i` 外的全部元素，占 `(n-c_i)log u` 位，其中 `c_i=|C_i|`；
+3. 一个 `c_i` 位 bitmap，标出哪 `k` 个元素在插入前已经属于正回答集合；
+4. 插入 `C_i` 后的数据结构状态，共 `b_i` 位；
+5. 利用块前后正回答集合，对 `C_i` 内元素做相对编码。
+
+结构已固定为确定性结构。给出块外元素和中间状态后，可确定 `hat(S)_{i-1}` 与 `hat(S)_i`。因此：
+
+- `c_i-k` 个新元素来自小差集 `hat(S)_i \ hat(S)_{i-1}`；
+- `k` 个旧误报元素来自 `hat(S)_{i-1}`，上界时可放宽到 `hat(S)_i`。
+
+式 (3.2) 给出的相对编码长度为：
+
+```text
+(c_i-k) log((mu(hat(S)_i)-mu(hat(S)_{i-1}))u)
++ k log(mu(hat(S)_i)u)
++ O(1)。
+```
+
+代入 Lemma 3.3、`k<=9epsilon*c_i` 和 `mu=O(epsilon)`，得到至多：
+
+```text
+c_i(log u + log epsilon
+    -(1-9epsilon)log log_gamma(1/alpha)
+    +O(1))。
+```
+
+原文将常数 `4` 等吸收到 `O(1)`，不能把简化后的 `log epsilon` 误读为正回答集合测度严格等于 `epsilon`。
+
+原文位置：PSW PDF 第 9--10 页，式 (3.2) 及后续推导。
+
+### 14.6 第五步：不可压缩性迫使状态足够大
+
+Lemma 3.4 给出至少 `u^n/3` 条不同好序列，任何无歧义编码至少需要：
+
+```text
+log(u^n/3)=n log u-O(1)
+```
+
+位。将编码各部分求和并与计数下界比较，得到：
+
+```text
+b_i >= c_i(
+          log(1/epsilon)
+          +(1-9epsilon)log log_gamma(1/alpha)
+          -O(1))。
+```
+
+几何块还满足 `c_i/n_i >= 1-1/gamma`。结合假设 `b_i<=beta*n_i`，即得 Theorem 3.1。证明本质是：若每个中间状态都太小，就能把至少 `u^n/3` 条序列编码得短于计数下界，产生矛盾。
+
+### 14.7 如何推出 `n log log n`
+
+原文取：
+
+```text
+alpha=1/sqrt(n)，
+gamma=2^{(log n)^eta}，其中 0<eta<1。
+```
+
+于是：
+
+```text
+1-1/gamma = 1-o(1)，
+log_gamma(1/alpha)=Theta((log n)^{1-eta})，
+log log_gamma(1/alpha)=(1-eta)log log n-O(1)。
+```
+
+从而推出 Theorem 1.1：
+
+```text
+(1-o(1))n log(1/epsilon)+Omega(n log log n)。
+```
+
+若让 `gamma` 更缓慢地增长，可同时保持 `1/gamma=o(1)` 和：
+
+```text
+log log_gamma(1/alpha)=log log n-o(log log n)。
+```
+
+结合 `(1-9epsilon)`，额外项系数为 `1-O(epsilon)-o(1)`。因此 Liu--Yin--Yu 将 PSW 参数化结果概括为：
+
+```text
+(1-o(1))n(log(1/epsilon)+(1-O(epsilon))log log n)。
+```
+
+严谨表述应注明：PSW Theorem 1.1 字面以 `Omega(n log log n)` 陈述；更细领先系数来自 Theorem 3.1 的参数化形式。
+
+### 14.8 为什么该下界与操作时间无关
+
+PSW 允许结构免费访问只读随机比特数组，也不限制 membership 算法时间；证明只读取某时刻的结构状态并进行信息论编码。因此即使时间无限宽松，该空间下界仍成立。
+
+### 14.9 当前状态
+
+**由 Q1 转入 Q0：** averaging、几何块选择、旧误报控制、中间状态编码、`log log n` 来源和 Theorem 3.1 到 Theorem 1.1 的参数代入均已由原文核实。
+
+**仍需交叉复核：**
+
+- 由 Theorem 3.1 写成精细 `(1-O(epsilon))` 系数时，`gamma` 随 `n` 缓慢增长的具体选择；
+- Review 正文是否保留 Lemma 3.4 的概率常数，还是只保留证明骨架。
+
+这些属于表述精度选择，不再是“完全不理解下界证明”。
