@@ -93,12 +93,12 @@ learned Bloom filter
 - 年份/位置：2024, PVLDB 17(11): 3644-3656
 - DOI：https://doi.org/10.14778/3681954.3682027
 - 正式发表：是
-- 是否引用本文：是；§6 “From Theory into Practice” 明确比较 Liu-Yin-Yu。
+- 是否引用本文：是；§7 相关工作段明确比较 Liu-Yin-Yu。
 - 研究问题：无限扩展下让插入、查询、删除保持常数时间，并改善 memory-FPR tradeoff。
 - 与本文的直接关系：正文称 Liu-Yin-Yu 在 `N` 与 `U` 多项式相关时给出 `log log N + O(log log log N)` overhead、whp 常数操作，但未证明删除且增长受 universe `U` 限制。
 - 是否真正改进本文：在删除、无限增长和实践实现维度更强；是否在相同理论空间模型上改进，`否/不可直接比较`。
-- 结论来源：摘要与 §6 相关工作段落；主算法定理尚未核。
-- 核验状态：`已读相关章节`
+- 结论来源：摘要、§5.2 与 §7（PDF pp.1、8、12）。
+- 核验状态：`已读关键全文段落；时间口径仍需区分摘要 constant 与清理 amortized`
 
 ### C3. Tight Cell-Probe Lower Bounds for Dynamic Succinct Dictionaries
 
@@ -107,7 +107,7 @@ learned Bloom filter
 - DOI：https://doi.org/10.1109/FOCS57990.2023.00112
 - arXiv：https://arxiv.org/abs/2306.02253
 - 正式发表：是
-- 是否引用本文：`待核验`
+- 是否引用本文：是；§1 的 unknown-size incremental filter 最优空间式以 [28] 引用本文。
 - 研究问题：动态 succinct dictionary 中每 key wasted bits 与操作时间的 cell-probe 下界。
 - 摘要结果：当 `U=n^{1+Theta(1)}`，每 key 仅 `O(log^{(k)} n)` wasted bits 时，期望操作时间下界为 `Omega(k)`；带大 value 时给出更新下界。
 - 与本文关系：属于本文 dictionary 结果的后续理论环境，但模型允许删除、空间参数和时间度量不同。
@@ -136,10 +136,10 @@ learned Bloom filter
 - 正式发表：是
 - 是否引用本文：`待核验`
 - 研究问题：支持插入/删除、受容量 `n` 约束的 dynamic filter 的信息论空间下界。
-- 摘要结果：证明 dynamic filter 相对静态 filter 的 `Theta(n)` 额外位是不可避免的；更精确常数需读正文。
+- 正文结果：主结论为 `n log(1/ε)+Ω(n)`；Theorem 3.1 在其参数范围给出大于 `0.35n-o(n)` 的线性额外空间下界。
 - 与本文关系：同属 filter 下界，但这里的 dynamic 轴主要是 deletion，不是 unknown final size；可用于提醒读者两个“动态”问题不要混同。
 - 是否真正改进本文：不是同模型的直接改进。
-- 核验状态：`仅看摘要`
+- 核验状态：`已读定义、主结论、Theorem 3.1 与引用表（PDF pp.1、3--4、12）`
 
 ### C6. Resizable Retrieval
 
@@ -147,11 +147,11 @@ learned Bloom filter
 - 年份/位置：2026 arXiv 预印本
 - arXiv：https://arxiv.org/abs/2606.15944
 - 正式发表：否，当前仅确认预印本
-- 是否引用本文：`待核验`
+- 是否引用本文：是；Introduction 和 references [LYY20] 明确引用，并讨论由 extendable filter 到当前 `n` 空间的关系。
 - 研究问题：让 retrieval 结构的空间按当前 key 数 `n` 而非容量 `N` 计算，并给出 filter 推论。
-- 与本文关系：`resizable` 与 unknown-size 目标高度相近，且有 dynamic filter 推论；必须读正文后确定推论是否复用或改进本文。
-- 是否真正改进本文：`候选，未证实`
-- 核验状态：`仅看摘要`
+- 与本文关系：`resizable` 与 unknown-size 目标高度相近；Corollary 3.14 给支持动态操作、按当前 `n` 计空间的 filter，但空间含 `O(n log log(U/n))` 与哈希函数项，时间是 whp in `n`，不与本文逐字同口径。
+- 是否真正改进本文：在支持删除且空间按当前 `n` 的维度是直接新进展；由于参数与概率口径不同，不能写成无条件全面改进。
+- 核验状态：`已读 Introduction、Theorem 1.1、Corollary 3.14（v1 PDF pp.2--4、20--21）；预印本`
 
 ## 8. 明确不在本轮下结论的方向
 
@@ -162,9 +162,21 @@ learned Bloom filter
 ## 9. 下一步核验顺序
 
 1. 成员 C 人工使用 Google Scholar 的 “cited by” 核对 C1-C6 是否引用本文；
-2. 精读 Aleph §6 和主结果，完成与本文的逐项同模型/异模型表；
+2. 精读 Aleph §7 和主结果，完成与本文的逐项同模型/异模型表；
 3. 精读 C3/C4 的 related work 与定理，确认 dictionary 线的真实承接关系；
 4. 精读 C5，明确 deletion-dynamic 与 resizable-dynamic 的下界差异；
 5. C6 在正式发表前只保留为预印本候选。
 
 成员 C 已于 2026-07-19 审核本轮内容，并确认其可作为第一轮过程记录。候选工作的事实状态仍以表内的“已核验/待核验”标记为准。
+
+## 10. 第二轮全文核验更新（2026-07-21，待成员 C 审核）
+
+本轮不改写第一轮检索历史，而是把已完成的全文核验单独记录如下。完整逐项矩阵见 `references/post-2020-matrix.md`。
+
+1. **Aleph Filter**：已定位 Abstract、§5.2、§7。它直接引用 LYY，并明确比较删除、宇宙上界与空间项；摘要的 constant-time 表述与 void duplicate 清理的 amortized 分析必须同时保留。
+2. **Kuszmaul--Walzer 2024**：已定位模型定义、主结论、Theorem 3.1 和 [28]。其 `n` 是容量，支持插入与删除，主下界不依赖运行时间；不能拿来否定 LYY 的 insertion-only 结果。
+3. **Resizable Retrieval v1**：已定位 Theorem 1.1 和 Corollary 3.14。filter 推论支持当前 `n` 下的动态操作，空间为 `n log(1/ε)+O(n log log(U/n))+polylog U+O(U^δ)`，操作为 constant time whp in `n`；截至本轮只按预印本处理。
+4. **InfiniFilter**：摘要与 Aleph 的后续比较已读，但没有取得可搜索的正式全文，因此直接引用关系保持未判定。
+5. **Li 2023/2024**：本轮只保留候选，不把后续论文的转述替代原文核验。
+
+第二轮结论仍是“多维比较而非单一排名”。成员 C 审核时应重点检查三篇 E3 文献的页码和时间口径，而不是只看本节摘要。

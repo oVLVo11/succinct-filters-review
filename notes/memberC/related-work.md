@@ -174,7 +174,7 @@ Bender et al. 研究自适应查询：即使查询者根据过去回答选择下
 
 1. 精读 PSW 2013 的下界和上界定理；
 2. 精读 Scalable Bloom Filter 的查询结构数、空间和 FPR 预算；
-3. 精读 Aleph Filter §6 对本文的直接比较，并核对其定理而不只用摘要；
+3. 精读 Aleph Filter §7 对本文的直接比较，并核对其定理而不只用摘要；
 4. 从每篇 dictionary 后续论文正文确认是否引用 Liu-Yin-Yu；
 5. 与成员 A 共同核对所有 `n/u/epsilon` 条件后，再把复杂度写入最终 Review。
 

@@ -246,3 +246,23 @@ Day 2 原有分歧“第 n 次插入与 `n=|S|` 是否混用”已转入 Q1.5：
 - 若章节声称“Claim 13 存储不变式已严格证明”→ 必须先关闭 issue-stage-index。  
 - 伪代码控制流、无 FN 直觉、时间 O(1) 框架：**可进入 Day 5 草稿**，并标注条件 `¬failed` 与 Q3。
 
+---
+
+## 成员 C 第二轮核查更新（2026-07-21，待本人确认）
+
+### C 材料缺口回应
+
+1. **Dynamic/scalable Bloom filter 是否满足本文全部 unknown-size 要求？** 不能。第一轮原文核验已显示其查询结构数、FP 预算或时间口径不同，详见 `notes/memberC/related-work.md`。
+2. **Quotient/cuckoo filter 是否依赖容量或负载上界？** 是。它们是重要工程对照，但 resize / 删除不自动等于 LYY 的 unknown-size succinct + worst-case 组合保证。
+3. **2020 年后是否有直接引用或推进？** 已确认 Aleph 2024、Kuszmaul--Walzer 2024、Resizable Retrieval 2026 v1 直接引用 LYY；关系与模型见 `references/post-2020-matrix.md`。InfiniFilter 和 Li 线仍有全文缺口。
+4. **时间类型是否已经区分？** 三篇 E3 候选已区分：Aleph 摘要称 constant，但部分清理 amortized；STOC 2024 是与时间无关的下界；Resizable Retrieval 是 constant-time operations whp in `n`。
+
+### 对共同证明表新增的 Q1/Q3
+
+1. **当前写入层初始化就绪**：B 伪代码若在一次 Insert 内“推进直至可用”，可能破坏 worst-case `O(1)`；需以上一阶段已完成初始化作为不变式。
+2. **迁移写入 failure**：`MigrateOneStep` 没有检查目标 `D/T.insert` 的失败返回；在源项已 decrement 后失败会破坏“迁移不丢串”的无条件措辞。
+3. **小下标边界**：`ell(0)` 包含 `log 0`，且四查模板在 `i=0` 有负下标；需要有限初始规模特判。
+4. **FP / 空间 / 高概率**：证明表 A 列仍未完成逐项求和和峰值核算，三行不能转 Q0。
+
+完整审阅：`discussions/review-day3-C.md`、`discussions/review-day4-C.md`。以上均为待成员 C 确认的审阅草案，不代表队友已接受或问题已关闭。
+

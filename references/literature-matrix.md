@@ -1,6 +1,6 @@
 # 文献比较矩阵（第一轮）
 
-- 日期：2026-07-19
+- 日期：2026-07-19 建表；2026-07-21 更新三项后续全文核验
 - 负责人：陈戚（成员 C）
 - 规则：`待核验` 不得在后续改写时自动变成肯定结论。
 
@@ -20,12 +20,12 @@
 | Adaptive filter (Bender et al.) | 2018 | 对历史查询自适应的 AMQ | 待核验 | 摘要称更新 whp 最坏常数 | 摘要称 whp 最坏常数 | 待核验 | 本地组件 lower-order optimal（完整系统待核） | 每次查询对历史保持 `epsilon` | 摘要级 | 不同的“adaptive”轴，[5] | 仅看摘要 | arXiv 摘要；79:4 |
 | Quotient filter | 2012 | fingerprint AMQ / 外存友好 | `m=2^q` 个槽并依赖负载率；可由 fingerprint 恢复而 resize | 支持；需移动 cluster | 扫描 cluster；平均 cluster `O(1)` | 支持 | 每槽 `r+3` bits，FP 至多约 `2^{-r}`；空间取决于负载 | 一侧错误 | 最长 cluster 受概率界控制，但不是本文的确定最坏常数保证 | 原文未引用的工程对照；resize/删除不等同本文模型 | 已读原文相关章节 | PVLDB §3-4，PDF pp.1-6 |
 | Cuckoo filter | 2014 | 两候选桶 fingerprint AMQ | 固定桶数 `m`、桶容量 `b` 和目标负载；需留空槽 | 支持；递归 relocation 可能失败 | 查询两个桶 | 支持 | 实用配置按 `alpha` 计 bits/item；partial-key 失败分析要求 `f=Omega(log(n/b))` | 一侧错误 | 原文以实验和部分失败分析为主，不能写成无条件最坏常数 | 原文未引用的工程对照；删除/吞吐是不同评价轴 | 已读原文相关章节 | CoNEXT §1、§4-5，式 (3)，PDF pp.1、6-7 |
-| InfiniFilter | 2023 | 无限扩展 tabular filter | 最终容量不预知 | 支持 | 会随辅助表增长，细节待核 | 支持情况待核 | memory-FPR tradeoff，公式待核 | 一侧错误 | 待核验 | 后续工程候选 | 仅看摘要 | DOI 摘要 |
-| Aleph Filter | 2024 | 无限扩展、支持删除的 filter | 可无限增长；预测模式可给估计 | 论文称常数 | 论文称常数 | 支持 | 与静态 filter 的 memory-FPR 权衡，非本文同一公式 | 一侧错误 | 定理细节待核 | 明确引用本文；不同维度增强 | 已读相关章节 | PVLDB 摘要、§6 |
+| InfiniFilter | 2023 | 无限扩展 tabular filter | 最终容量不预知 | 支持 | void entries 可导致多表搜索（Aleph 转述） | 摘要称支持 | memory-FPR tradeoff，公式待核 | 一侧错误 | 原文时间口径待核 | 后续工程候选；是否直接引用 LYY 未判定 | 摘要 + Aleph §1 对照 | DOI 摘要；Aleph PDF p.1 |
+| Aleph Filter | 2024 | 无限扩展、支持删除的 filter | 可无限增长；预测模式可给估计 | 论文称常数 | 论文称常数 | 支持；部分 void duplicate 清理按生命周期 amortized | 与静态 filter 的 memory-FPR 权衡，非本文同一公式 | 一侧错误 | 不能直接等同 LYY 的 whp worst-case 口径 | 明确引用本文；删除/无限增长维度增强 | 已读关键全文段落 | PVLDB Abstract、§5.2、§7，PDF pp.1、8、12 |
 | Li et al. lower bound | 2023 | dynamic succinct dictionary cell-probe 下界 | 容量参数为 `n` | 更新下界 | 操作下界 | 支持动态 | wasted bits `O(log^(k)n)`/key | exact | expected `Omega(k)` 下界 | 后续 dictionary 理论 | 仅看摘要 | FOCS/arXiv 摘要 |
 | Li et al. subconstant waste | 2024 | dynamic exact dictionary | 容量/当前规模关系待核 | `O(log* n+log(n/R))` 摘要级 | 同左 | 摘要称动态 | 总冗余 `R=o(n)` | exact | 摘要级 | 后续 dictionary 上界 | 仅看摘要 | SODA 出版摘要 |
-| Kuszmaul-Walzer | 2024 | 支持插入/删除、容量 `n` 的 dynamic filter | 有容量约束 | 支持 | 时间不作为下界条件 | 支持 | `n log(1/epsilon)+Omega(n)` 下界（摘要级） | 一侧错误 | 与时间无关的空间下界 | deletion-dynamic，不同于 unknown-size | 仅看摘要 | STOC 出版摘要 |
-| Resizable Retrieval | 2026 | 空间随当前 `n` 的 retrieval/filter 推论 | 否 | 摘要称支持 | 摘要称支持 | 摘要称支持 | 摘要给 retrieval 界；filter 推论待核 | 待核验 | 待核验 | 高相关预印本候选 | 仅看摘要 | arXiv:2606.15944 |
+| Kuszmaul-Walzer | 2024 | 支持插入/删除、容量 `n` 的 dynamic filter | 有容量约束 | 支持 | 时间不作为下界条件 | 支持 | `n log(1/epsilon)+Omega(n)`；Thm 3.1 特定区间给 `>0.35n-o(n)` 线性冗余 | 一侧错误 | 信息论下界，与时间无关 | 直接以 [28] 引用 LYY；deletion-dynamic 不同于 unknown-size | 已读定义、主定理与引用 | STOC PDF pp.1、3--4、12 |
+| Resizable Retrieval | 2026 | 空间随当前 `n` 的 retrieval/filter 推论 | 不预先固定最终规模；空间按当前 `n` | 支持 | 支持 | 支持 | Cor. 3.14：`n log(1/ε)+O(n log log(U/n))+polylog U+O(U^δ)` | 无 FN；FP `ε` | constant-time operations whp in `n` | 直接引用 LYY；当前 `n` 与删除维度的新进展，参数不同 | 已读关键全文段落；预印本 | arXiv v1 Thm 1.1、Cor. 3.14，PDF pp.2、20--21 |
 
 ## 矩阵回答的当前结论
 

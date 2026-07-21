@@ -106,3 +106,36 @@ Dynamic Bloom Filter、Quotient Filter 和 Cuckoo Filter 通过在线 PDF 的页
 ### 提交状态
 
 本次修改尚未 commit 或 push，等待成员 C 查看差异并确认下一步。
+
+## 2026-07-21：Day 3--4 第二轮文献核验与交叉审阅草案
+
+### 成员 C 的工作目标与决定
+
+成员 C 要求直接推进本人仍需完成的过程材料，并在完成后先交本人审核。成员 C 已审核此前两轮材料，本轮沿用其确定的分工：后续研究核验、来源维护、对 A/B 构造和证明材料的交叉审阅，以及优点/局限证据整理。本轮不撰写最终 Review 正文，也不替成员 C 声称已经阅读、同意或能够解释尚未亲自核查的内容。
+
+### AI 执行的辅助工作
+
+1. 对照 `work/day3.md`、`work/day4.md` 和仓库最新文件审计成员 C 的验收缺口。
+2. 阅读 Aleph Filter、Kuszmaul--Walzer 2024、Resizable Retrieval 三篇原始 PDF 的关键页，记录定义、定理/推论、直接引用语境和时间保证类型。
+3. 建立 `references/post-2020-matrix.md`，把 unknown-size insertion-only、支持删除的 capacity-dynamic、按当前 `n` 的 resizable 三种模型分开。
+4. 检查 B 的 8 元素示例、构造拆解和伪代码，形成 `review-day3-C.md`、`review-day4-C.md` 审阅草案；指出 `ell(0)`、当前层初始化、迁移 failure 传播等可定位问题。
+5. 将可核验的优点、局限、适用条件和未来方向整理为证据清单，未将其润色为课程论文段落。
+
+### 本轮原始来源与核验位置
+
+| 来源 | 阅读位置 | 用途 |
+|---|---|---|
+| Dayan et al., *Aleph Filter* (PVLDB 2024) | Abstract；§5.2；§7，PDF pp.1、8、12 | 直接引用 LYY；删除、无限增长、空间与 amortized 清理边界 |
+| Kuszmaul--Walzer, *Space Lower Bounds for Dynamic Filters...* (STOC 2024) | 定义与主结果；§1 引用；Thm 3.1；PDF pp.1、3--4、12 | 区分 deletion-dynamic 与 unknown-size；核对线性冗余下界 |
+| Kuszmaul et al., *Resizable Retrieval* (arXiv v1, 2026) | Introduction；Thm 1.1；Cor. 3.14；PDF pp.2--4、20--21 | 当前 `n` 空间、动态 filter 推论、预印本状态 |
+
+### 人工审核边界
+
+- 所有新建审阅文件均明确标为“待成员 C 审核”；AI 没有把待审状态改成成员 C 已完成或队友已接受。
+- InfiniFilter 与 Li 2023/2024 未完成原始全文核验，仍保留摘要级/待核验标签。
+- 2026 工作只按 arXiv v1 预印本引用，最终提交前需再次核对版本和发表状态。
+- 成员 C 应逐项打开矩阵记录的页码，用自己的话复述模型、定理和比较理由；无法复述的内容应删除或退回待核验。
+
+### 工作区与提交状态
+
+本轮只修改课程仓库内的过程材料，没有 commit、push 或创建 PR。既有未跟踪文件 `notes/memberC/review-of-memberB.md` 未被修改，也未纳入本轮材料；待成员 C 审核本轮差异后再决定是否提交。

@@ -24,16 +24,17 @@
 | Raman, Rao, *Succinct Dynamic Dictionaries and Trees* (2003) | succinct dictionary / extendable arrays | [29] | §1、§1.2、§1.3、§1.4、§2.2、References | PSW 黑盒、当前 `n` 空间和内存模型基础 | 仅看摘要 | extendable array 与更新定理全文 | https://doi.org/10.1007/3-540-45061-0_30 |
 | Bender et al., *Don't Thrash: How to Cache Your Hash on Flash* (2012) | quotient filter | 未引用 | 无 | 删除、resize、局部性；依赖槽数和负载率 | 已读原文 §3-4 | 若进入正文，区分内存 QF 与 BQF/CF 的复杂度 | https://doi.org/10.14778/2350229.2350275；PDF pp.1-6 |
 | Fan et al., *Cuckoo Filter: Practically Better Than Bloom* (2014) | cuckoo filter | 未引用 | 无 | 动态增删和实践吞吐；容量/负载及插入失败对照 | 已读原文 §1、§4-5 | 原论文未给 unknown-size resize 定理；最坏时间仍不可直接填写 | https://doi.org/10.1145/2674005.2674994；PDF pp.1、6-7 |
-| Dayan et al., *InfiniFilter* (2023) | 后续 expandable filter | 未引用（后发） | 无 | 无限扩展、FPR/内存/性能权衡 | 仅看摘要 | 是否引用本文及同模型空间定理 | https://doi.org/10.1145/3589285 |
-| Dayan, Bercea, Pagh, *Aleph Filter* (2024) | 后续 expandable filter | 未引用（后发） | 无 | 正文明示比较本文；加入删除与无限增长 | 已读相关章节 | 核查主定理和实验边界 | https://doi.org/10.14778/3681954.3682027 |
+| Dayan et al., *InfiniFilter* (2023) | 后续 expandable filter | 未引用（后发） | 无 | 无限扩展、FPR/内存/性能权衡 | 摘要 + Aleph §1 对照 | 取得正式全文后核对是否引用本文；当前不判定 | https://doi.org/10.1145/3589285 |
+| Dayan, Bercea, Pagh, *Aleph Filter* (2024) | 后续 expandable filter | 未引用（后发） | 无 | 正文明示比较本文；加入删除与无限增长 | 已读 Abstract、§5.2、§7 | 区分公开 constant-time 与部分清理 amortized 口径 | https://doi.org/10.14778/3681954.3682027；官方 PDF pp.1、8、12 |
 | Li et al., *Tight Cell-Probe Lower Bounds for Dynamic Succinct Dictionaries* (2023) | 后续 dictionary 下界 | 未引用（后发） | 无 | redundancy-time tradeoff 的后续理论 | 仅看摘要 | 是否引用本文、定理模型 | https://doi.org/10.1109/FOCS57990.2023.00112 |
 | Li et al., *Dynamic Dictionary with Subconstant Wasted Bits per Key* (2024) | 后续 dictionary 上界 | 未引用（后发） | 无 | `R=o(n)` 冗余区间 | 仅看摘要 | 与本文 dictionary 的模型/空间对齐 | https://doi.org/10.1137/1.9781611977912.9 |
-| Kuszmaul, Walzer, *Space Lower Bounds for Dynamic Filters and Value-Dynamic Retrieval* (2024) | 后续 dynamic filter 下界 | 未引用（后发） | 无 | 说明 deletion-dynamic 与 resizable-dynamic 的区别 | 仅看摘要 | 是否引用本文、精确下界常数 | https://doi.org/10.1145/3618260.3649649 |
-| Kuszmaul et al., *Resizable Retrieval* (2026) | 后续 resizable retrieval/filter | 未引用（后发） | 无 | 空间按当前 `n`，含 filter 推论 | 仅看摘要 | 全文、引用关系、是否正式发表 | https://arxiv.org/abs/2606.15944 |
+| Kuszmaul, Walzer, *Space Lower Bounds for Dynamic Filters and Value-Dynamic Retrieval* (2024) | 后续 dynamic filter 下界 | 未引用（后发） | 无 | 说明 deletion-dynamic 与 incremental unknown-size 的区别 | 已读定义、主结论、Thm 3.1、引用 | 已确认 [28]=LYY；正文使用时保留容量 `n` 与删除模型 | https://doi.org/10.1145/3618260.3649649；KIT PDF pp.1、3--4、12 |
+| Kuszmaul et al., *Resizable Retrieval* (2026) | 后续 resizable retrieval/filter | 未引用（后发） | 无 | 空间按当前 `n`，含 filter 推论 | 已读 Intro、Thm 1.1、Cor. 3.14 | 已确认引用 LYY；提交前复核预印本版本/发表状态 | https://arxiv.org/abs/2606.15944；v1 PDF pp.2--4、20--21 |
 
 ## 需特别说明的缺口
 
 - 原论文 References 没有直接列 Bloom 1970、quotient filter、2014 cuckoo filter；最终 Review 必须标成“原文未引用但相关”，不能伪装成原论文比较对象。
 - 原论文 [6] 引用的是 2019 arXiv；与 2020 SWAT 正式版本的题名和结果对应关系尚待核验。
-- 当前多数候选只读摘要，因此复杂度矩阵中不能把它们升级为“已核查定理”。
+- 后续候选中 Aleph、Kuszmaul--Walzer 2024、Resizable Retrieval 已读关键全文段落；InfiniFilter 与 Li 2023/2024 仍不能升级为“已核查定理”。
+- 后续工作的直接引用与模型口径以 `references/post-2020-matrix.md` 为准。
 - `references/bibliography.bib` 仅收录本轮已核查元数据的条目；缺失条目不是不存在，而是尚未完成可靠 BibTeX 核验。
