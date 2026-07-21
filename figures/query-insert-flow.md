@@ -1,68 +1,74 @@
-# 查询 / 插入流程（与 8 元素示例一致）
+# 查询 / 插入流程（Day 3：挂接组件小节）
 
 > 来源：§3.1、Claim 13。  
-> 与 `notes/memberB/construction-notes.md` §6、`figures/growth-process.md` 同步。
+> 组件说明：`notes/memberB/core-components.md`  
+> 控制参数：`i★(n) = ⌈log n⌉`（仅按算法句；阶段下标冲突见组件 4 / Q3）
+
+**术语**：下一层可能已 `initialize`，但 Lookup **只**访问下表“查询活跃”列（回应 A 审阅意见 1）。
 
 ---
 
-## A. Lookup(y)
+## A. Lookup(y) → 组件 1,3,5,9
 
 ```text
 输入 y ∈ [u]
    │
    ▼
-h(y) ← 全局哈希
+h(y) ← 全局哈希                         【组件1】
    │
    ▼
-i ← ⌈log n⌉
+i ← i★(n) = ⌈log n⌉                    【组件4】
    │
-   ├─► query(D_{i-1}, h(y))
+   ├─► query(D_{i-1}, h(y))             【组件3,5,10】
    ├─► query(D_i,     h(y))
-   ├─► query(T_{i-1}, h(y) 的前 i-1 位)
+   ├─► query(T_{i-1}, h(y) 的前 i-1 位) 【组件5】
    └─► query(T_i,     h(y) 的前 i 位)
    │
    ▼
-任一 YES → YES；全 NO → NO
+任一 YES → YES；全 NO → NO              【组件3：无 FN / 有界 FP】
 ```
 
-8 元素对照：
+8 元素对照（教学；按 `i★`）：
 
-| 当前 n | i | 实际检查 |
-|---|---|---|
-| 1 | 0 | `D0, T0` |
-| 2 | 1 | `D0,D1,T0,T1` |
-| 3–4 | 2 | `D1,D2,T1,T2` |
-| 5–8 | 3 | `D2,D3,T2,T3` |
+| 当前 n | i★ | 查询活跃（算法实际调用） | 可能已存在但不查 |
+|---|---|---|---|
+| 1 | 0 | `D0, T0` | 初始还有 `D1,T1` |
+| 2 | 1 | `D0,D1,T0,T1` | 推进中的 `T2/D2` |
+| 3–4 | 2 | `D1,D2,T1,T2` | `T3/D3`（初始化中） |
+| 5–8 | 3 | `D2,D3,T2,T3` | `T4/D4`（初始化中） |
 
-失败未发生时：无 FN；FP ≤ `ε`；时间 `O(1)`。
+失败未发生时：无 FN；FP ≤ `ε`；时间 `O(1)`。【组件9】
 
 ---
 
-## B. Insert（第 n 个元素）
+## B. Insert（第 n 个元素）→ 组件 2,4,6–10
 
 ```text
-i ← ⌈log n⌉
-s ← h(x) 的前 ℓ_i 位
+i ← i★(n)
+s ← h(x) 的前 ℓ_i 位                    【组件2】
 若尚无 s 的前缀在库中:
-      insert(D_i, s)          ← 新元素默认进 D_i（不是 T_i）
+      insert(D_i, s)                    【组件7,10：新键默认进 D_i】
 
-重复 10 次:                   ← Claim 13 原文 “for 10 times”
-  (1) T_{i-1} 非空 → decrement；若得 y → insert(T_i, y∘0) 与 y∘1
-  (2) D_{i-1} 非空 → decrement；若得 y →
-        |y| > i → insert(D_i, y)
-        否则     → insert(T_i, y)
-  (3) 旧空未销毁 → destroy
-  (4) 旧已销毁   → initialize(T_{i+1} / D_{i+1})
+重复 10 次:                             【组件8；字面10=原文，配平见Q3】
+  (1) T_{i-1} → y∘0,y∘1 写入 T_i       【组件7】
+  (2) D_{i-1} → |y|>i ? D_i : T_i      【组件7】
+  (3) destroy 旧结构                    【组件6,8】
+  (4) initialize(T_{i+1}/D_{i+1})      【组件6,8：已初始化≠查询活跃】
 ```
-
-`initialize` / `destroy` 本身也需多次调用；进度摊在各次插入上。
 
 ---
 
-## C. 底层 `D(m,ℓ)`（Day 3，此处仅接口）
+## C. 底层 `D(m,ℓ)` → 组件 10（§5，接口级）
 
 ```text
 Insert/Query into D:
-  按 st(x) 进 subtable → adaptive prefixes → data block
-  （细节见 §5；本图不展开）
+  st(x) → subtable → adaptive prefixes → data block
+  （位级与 O(log log log u) 冗余：Day 4 / Q2）
 ```
+
+---
+
+## D. 示例能/不能证明（回应 A 审阅意见 4）
+
+- **能**：`i★` 控制流、新键进 `D_i`、四结构查询、迁移骨架。
+- **不能**：FP、failure、空间领先常数、字面常数 10、真实 `ℓ_i`、§5 冗余。

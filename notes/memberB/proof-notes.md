@@ -68,17 +68,20 @@ Thm 12 (Dictionary)
 4. **hd∘hs 碰撞**：组合界式 (4)。
 5. **总失败概率**：式 (5) 并合到 `u^{-2C}`，再对阶段并合到 `δ`。
 
-### 3.3 尚未独立验证的步骤（Q2）
+### 3.3 Day 3 状态
 
-- Claim 13 中“10 次”是否对所有 `initialize/destroy/decrement` 进度同时足够（常数是否随参数变）。（Day 2 已确认原文确为 10；配平论证仍待 Day 3）
-- Claim 13 不变式 `n∈[2^i,2^{i+1})` 的 `i` 与操作中 `⌈log n⌉` 的对齐（Day 2 记入 questions Q1.5）。
-- 静态 data block 空间从 pocket dictionary 变体到 `n(ℓ − log m + 2 log log log u) + O(m)` 的逐项求和。
-- Dictionary 的 Feistel 论证与“可精确还原键”细节。
+| 项 | 状态 | 指针 |
+|---|---|---|
+| 字面常数 10 配平 | Q3 | `discussions/issues/issue-constant-10.md` |
+| `i★` vs 半开区间存储归纳 | Q3/Q1 | `discussions/issues/issue-stage-index.md`；`core-components.md` 组件 4 |
+| `D(m,ℓ)` 黑盒接口 | 已核实 | `core-components.md` 组件 10 |
+| Data block 冗余逐项 | Q2 | Day 4 |
+| Feistel dictionary | 未展开 | §6 / Day 4+ |
 
-### 3.4 Day 2 已核对（构造层）
+### 3.4 已核对（构造层）
 
-- 式 (2) 与 FP 并合骨架：§3.1。
-- 新键进 `D_i`、查询四结构、短/长串迁移规则：Claim 13。
-- 8 元素教学示例：见 `construction-notes.md` §6 与 `figures/growth-process.md`。
+- 式 (2)、新键进 `D_i`、四结构查询、短/长串迁移、每次维护 10 次（字面）：Claim 13 / §3.1。
+- 十组件拆解：`core-components.md`。
+- 依赖图补注：`figures/proof-dependency.md`。
 
 ---

@@ -185,3 +185,34 @@ Day 2 原有分歧“第 n 次插入与 `n=|S|` 是否混用”已转入 Q1.5：
 6. 取 `alpha=1/sqrt(n)` 和适当增长的 `gamma`，得到额外 `Omega(n log log n)`，精细形式含 `(1-O(epsilon))` 系数。
 
 新的核查点降为 Q1：由 Theorem 3.1 参数化公式写成 Liu--Yin--Yu 文中的精细领先系数时，请 B 独立复算 `gamma` 的选择，C 核查引用表述。A 的详细推导见 `notes/memberA/lower-bound-notes.md` §14。
+
+---
+
+## Day 3：张书铖（B）核查更新（2026-07-21）
+
+### 转入 / 维持 Q0
+
+1. **十组件接口层拆解**（哈希、变长前缀、prefix matching、四结构、迁移去向、`D(m,ℓ)` 黑盒接口）：见 `notes/memberB/core-components.md`。
+2. **A 审阅四条**：全部接受；示例区分“查询活跃 / 已初始化”；证明边界写入笔记。
+3. **Q1.5（重复插入与 n=|S|）**：复核 A 的 insertion-sequence 表述，**关闭分歧**。
+
+### Q1 更新
+
+1. **阶段下标**：升格为有明确临时变量的 Q1/Q3 混合项；操作跟 `i★`，存储归纳未关闭。负责人 B，复核 A，截止 Day 4。Issue：`discussions/issues/issue-stage-index.md`。
+2. **`D(m,ℓ)` 长串 prefix matching**：接口层 Q0；§5 位级为何“membership 即 prefix matching”仍为 Q1/Q2。负责人 B，Day 4。
+3. **PSW `gamma` 复算**：接受 A 安排，Day 4 独立复算后回报。
+
+### Q2 / Q3
+
+1. **常数 10**：维持 A 的判断——机制 Q1/渐近可讲，字面配平 **Q3**。Issue：`discussions/issues/issue-constant-10.md`。
+2. **Data block `O(log log log u)`**：仍 Q2，Day 4 与 failure 式 (3)(4)(5) 一起攻。
+3. **空间峰值**：仍 Q3，与 A 空间笔记对齐。
+
+### 产物指针
+
+- 组件：`notes/memberB/core-components.md`
+- 结构图：`figures/architecture.md`
+- 流程：`figures/query-insert-flow.md`
+- 依赖图补注：`figures/proof-dependency.md`
+- 审阅：`discussions/review-day3-B.md`
+- 会议：`discussions/meeting-day3.md`

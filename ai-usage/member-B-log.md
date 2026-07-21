@@ -41,3 +41,29 @@ Cursor Agent
 ### 最终使用方式
 仅用于定位原文与组织笔记；示例与结论均经 PDF 核对后改写。
 
+---
+
+## 2026-07-21
+
+### 使用者
+张书铖（成员 B）
+
+### 使用工具
+Cursor Agent
+
+### 提问目的
+按 `work/day3.md` 完成十组件拆解、阶段不变式、`D(m,ℓ)` 接口、常数 10 分析、体系结构图、Issue、审阅 A。
+
+### AI 回答摘要
+- 协助按统一模板写 10 个组件；引入 `i★`/`epoch`；区分字面 10 与渐近配平。
+- 协助 `architecture.md`、流程挂接、两个 Issue 验收条件。
+
+### 人工核查方式
+对照 Claim 13 接口与维护循环、式 (2)、A 的 `review-day3-A.md` 与引理笔记；未关闭下标归纳与字面 10。
+
+### 核查结论
+接口/控制流已核实；阶段下标与字面 10 保留 Issue；§5 data block 未展开。
+
+### 最终使用方式
+仅辅助组织；结论经原文核对后写入笔记。建议 commit：`notes(B): decompose dictionary and filter components` 等（见 day3.md）。
+

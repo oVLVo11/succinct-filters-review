@@ -46,3 +46,12 @@ flowchart TD
 - 字面常数 10 对黑盒 `O(m)` 隐藏常数的配平；
 - 新旧结构迁移瞬间的位级空间峰值；
 - PSW 下界不属于 Theorem 10 的正确性依赖链；其证明骨架已核查，详见 A 的下界笔记 §14。
+
+---
+
+## B 补注（2026-07-21）
+
+1. **边 Claim 13 → Lemma 11**：控制流（`i★`、四结构查询、10 轮维护、短/长串去向）已核实；**存储归纳**依赖的半开区间句与 `i★` 冲突，见 `discussions/issues/issue-stage-index.md`。画图时勿把该边读成“不变式已完全证明”。
+2. **边 Lemma 11 → 时间**：Insert 的 O(1) 还依赖“常数轮维护在阶段内配平”；字面 10 见 `discussions/issues/issue-constant-10.md`。
+3. **组件级展开**：`notes/memberB/core-components.md`、`figures/architecture.md`。
+4. **ε vs δ**：误报率与 failure 概率是两条边（FP 子图 vs FL 子图），不要合并解释。
