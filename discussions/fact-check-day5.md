@@ -37,6 +37,12 @@
 | failure ≤`δ` | 依赖 A | Thm 10.3；式 (3)–(5) | 待 B 数字复核 | 待 | |
 | `(1+o(1))` 与 `n>u^{0.001}` | A 章 | Thm 1 vs 10 | 待与 A 对齐 | 待 | 不与 Thm 10 条件混淆 |
 | 全面优于 Bloom | — | — | B | **禁止** | “在 unknown-size 理论目标下更强保证” |
+| PSW 是直接前作，LYY 不是首次提出 unknown-size | C §6 / 整合稿 §4.3 | PSW 2013；LYY §1 | C | 已核 | “LYY 收紧领先项与时间语义” |
+| `log log n` 领先常数最优 | A/C 比较段 | PSW Thm 3.1；LYY Thm 1/10 | C 二次核查 | 有条件成立 | 只在 `ε=o(1)` 等条件下说“领先项对齐” |
+| Aleph 全部操作与 LYY 同口径 worst-case 常数 | C §8.1 | Aleph Abstract、§5.2、§7 | C | **禁止** | 总述与 amortized 清理分开 |
+| 删除型 dynamic 下界否定 LYY | C §8.2 | Kuszmaul–Walzer Thm 3.1 | C | **禁止** | 删除改变模型的信息成本 |
+| Resizable Retrieval 已正式发表 | C §8.3 | arXiv/DBLP CoRR | C | **禁止** | 截至 2026-07-28 只称“2026 预印本” |
+| 后续工作全面取代 LYY | C §8 / 整合稿 §12 | 三篇 E3 后作 | C | **禁止** | 逐维说明扩大模型或改变保证 |
 
 ---
 
@@ -48,3 +54,15 @@
 - [x] 区分 ε 与 δ
 - [ ] 待 C 审后修订读者断点
 - [ ] 待与 A 统一 `ℓ_0` / `i=0` 口径
+
+---
+
+## 4. C 自检：相关研究与评价
+
+- [x] E1/E2 未承担确定性技术比较
+- [x] 不把 insertion-only unknown-size、含删除 fully dynamic、current-`n` resizable 混称
+- [x] expected / amortized / worst-case / whp / no-failure 条件逐项保留
+- [x] Quotient/Cuckoo filter 标为“原文未引用的外补对照”
+- [x] “优越性”拆为空间、时间、删除、扩展、实现与证明强度
+- [x] 2026 工作只按预印本引用
+- [ ] 待 A/B 抽查最终正文与参考文献表的一一对应

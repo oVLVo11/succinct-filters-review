@@ -1,7 +1,7 @@
-# Succinct Filters for Sets of Unknown Sizes：论文 Review（整合稿 v0.1）
+# Succinct Filters for Sets of Unknown Sizes：论文 Review（整合稿 v0.2）
 
-- **状态**：Day 6 第一版整合；**非终稿**
-- **整合说明**：技术直觉 / 实现 / 正确性与时间证明由张书铖（B）定稿并入；问题定义、主结果、下界、相关研究、评价等章在 A/C 的 Day 5 章节定稿前，仅保留**可追溯的笔记级桥接**，并标【待 A】【待 C】。未关闭 Q1/Q3 在正文中显式保留。
+- **状态**：Day 6 第二版整合；**非终稿，待成员审阅**
+- **整合说明**：技术直觉 / 实现 / 正确性与时间证明由张书铖（B）定稿并入；相关研究、评价、局限与后续研究由陈戚（C）完成第一轮整合；问题定义、主结果与下界仍待 A 的 Day 5 章节替换桥接。未关闭 Q1/Q3 在正文中显式保留。
 - **贯穿教学示例**：连续插入 8 个抽象元素 `x1…x8`（§6.5）；不承担一般证明。
 - **图示**：`figures/architecture.md`、`figures/query-insert-flow.md`、`figures/growth-process.md`、`figures/proof-dependency.md`
 
@@ -41,7 +41,39 @@
 
 ## 4. 相关研究
 
-【待 C 整合】读者测试意见见 `discussions/review-day6.md`（B 测相关工作笔记）。分层提醒：Bloom / scalable·dynamic Bloom / succinct dictionary / quotient·cuckoo / PSW / 2020 后工作不可排成单一“更优”序列。
+比较相关工作之前，先固定本文的目标组合：事前没有紧的最终容量上界；空间随当前插入规模变化；无漏报、误报率至多 `ε`；无 failure 时插入和查询为 worst-case `O(1)`。因此“动态”“可扩容”和“支持删除”必须拆成空间参数、查询路径、更新时间、删除、工程实现和概率口径分别比较。
+
+### 4.1 从 Bloom filter 到多组件扩展
+
+Bloom filter 是 approximate membership 的历史起点 [bloom1970space]；Carter 等人给出更一般的问题与下界基础 [carter1978membership]。经典 Bloom filter 通常根据目标容量设定位数组和哈希参数；持续超额插入会使误报偏离原目标。
+
+Scalable Bloom Filter（SBF）在组件达到阈值后追加更大组件，并按几何级数收紧各组件误报预算；查询要逐个测试已有组件 [almeida2007scalable, §4–§5]。Dynamic Bloom Filter（DBF）也追加组件，其论文给出的平均查询复杂度与组件数相关，误报表达式随组件数增长 [guo2006dynamic, §III]：
+
+```text
+query ──► Filter_0 ──► Filter_1 ──► … ──► Filter_s
+```
+
+它们说明未知最终规模可以用工程化组件增长处理，但没有自动获得本文“位级当前规模空间 + 固定常数个查询结构 + 可比最坏时间”的组合保证。本文也不能据此被概括为“全面优于 Bloom”。
+
+### 4.2 Succinct dictionary 与去均摊背景
+
+Exact dictionary 的稀疏信息论基准接近 `log binom(u,n)≈n log(u/n)+O(n)`；filter 的主基准是 `n log(1/ε)`。编码对象不同，不能直接比较两个对数项的大小。Raman–Rao、Demaine 等工作提供 succinct dynamic dictionary 背景 [raman2003succinct; demaine2006dictionariis]；去均摊 cuckoo hashing 则说明如何把重建拆到多次更新 [arbitman2010backyard]。LYY 的困难在于同时满足 bit-level succinctness 和 worst-case 去均摊，而不是把任一背景结构原样套用。
+
+Quotient filter 与 Cuckoo filter 是原文未引用、由本 Review 外补的工程对照。前者支持删除、合并和 resize，但依赖槽数、负载率与 cluster 长度 [bender2012quotient, §3–§4]；后者查询两个桶并支持删除，但插入可能 relocation 或失败，保证依赖桶数、桶容量、负载和 fingerprint 长度 [fan2014cuckoo, §4–§5]。删除、局部性和吞吐是有意义的额外维度，却不等于已经证明本文的 unknown-size 空间式。
+
+### 4.3 直接前作：PSW 2013
+
+Pagh–Segev–Wieder（PSW）直接研究最终规模未知、空间在各中间规模受约束的 approximate membership [pagh2013unknown]。其 Theorem 3.1 的编码下界说明，除 `n log(1/ε)` 外还要支付约 `n log log n` 的额外信息；下界不依赖操作时间。PSW 的上界插入为 expected amortized `O(1)`（按 LYY 转述），且 `log log n` 上界项没有钉死领先常数。
+
+LYY 的推进是组合性的：在相应条件下收紧 `log log n` 领先项，并在 no-failure 执行中同时给插入、查询 worst-case `O(1)` [liu2020succinct]。可靠说法是“在 insertion-only unknown-size 模型中收紧空间与时间语义”，而不是“首次提出 unknown-size”或无条件“达到全部信息论最优”。
+
+### 4.4 2020 年后的三类进展
+
+- **Aleph Filter（2024）**直接引用并比较 LYY，强调可运行的无限增长、删除和内存—误报率权衡 [dayan2024aleph, §7]。但其部分 void duplicate 清理按生命周期 amortized 分析（§5.2），不能直接等同于 LYY 的 no-failure worst-case 口径。
+- **Kuszmaul–Walzer（2024）**研究支持插入、删除且有容量约束的 fully dynamic filter，证明删除模型需要线性额外空间；Theorem 3.1 在相应区间给出 `>0.35n-o(n)` 的额外项 [kuszmaul2024dynamicfilters]。它说明删除改变信息论约束，不是对 LYY 正确性的否定。
+- **Resizable Retrieval（2026 预印本）**把空间按当前集合大小 `n` 计，并导出支持插入/删除的 filter 推论。Corollary 3.14 的空间为 `n log(1/ε)+O(n log log(U/n))+polylog U+O(U^δ)`，操作为相对当前 `n` 的 constant time with high probability [kuszmaul2026resizable]。它直接承接 PSW/LYY，但参数和概率口径不同；截至 2026-07-28 仍只按 arXiv/CoRR 预印本引用。
+
+InfiniFilter 目前为 E2；Li 等人 2023/2024 的 exact dynamic dictionary 工作为 E1。它们保留在研究矩阵展示检索过程，不进入本稿的确定性跨论文结论。完整时间线和证据等级见 `drafts/section-C-related-work-and-evaluation.md` 与 `references/citation-audit.md`。
 
 ---
 
@@ -202,19 +234,40 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 
 ## 10. 技术优越性
 
-【待 C；证据 S1–S4 见 `evaluation-evidence.md`】组合保证：unknown-size 空间主项 + 无 FN + FP≤`ε` + whp 最坏 O(1)。相对 PSW：领先常数与时间语义。非“全面优于 Bloom”。
+本文的非凡之处是**组合保证**，而不是某一个单项“首次”：
+
+| 维度 | 本文保证 | 审慎评价 |
+|---|---|---|
+| 空间 | 主项含 `log(1/ε)+log log n`，另有低阶项和 `u^c` | 在相应参数下与 PSW 的领先项对齐 |
+| 时间 | 无 failure 时插入、查询 worst-case `O(1)` | 比 PSW expected amortized 插入语义更强；不代表工程吞吐一定更快 |
+| 查询结构数 | 只查相邻两代 `D/T` | 避免扫描全部历史 filter |
+| 扩容 | 不需紧最终容量；后台迁移 | filter 丢弃原键后仍能扩容是核心难点 |
+| 证明 | 连接 FP、无 FN、failure、时间和位空间 | 定理强，但每项都有参数和概率前提 |
+
+从技术直觉看，短串 truth table 避免把短前缀大量复制成长串；两代 `D/T` 让旧数据在迁移时仍可查询；每次插入推进常数轮工作，把昂贵重建去均摊。底层 `D(m,ℓ)` 再把 prefix matching 压到所需冗余。这些组件的组合，而非单独一张表或一个哈希技巧，支撑了论文的主要结果。
 
 ---
 
 ## 11. 局限性与适用范围
 
-【待 C】至少须保留：无用户删除；保证 conditioned on no failure；`u^c` 与 `n=ω(log u)`；实现远复杂于工程 Bloom；字面 10 与阶段下标为小组核查缺口（L4）；删除模型有不同下界，不能反推本文错误。
+1. **无用户删除**：Theorem 10 针对插入序列，不能称 fully dynamic。
+2. **概率有两层**：`ε` 是无 failure 时的误报率，`u^{-C}` 是整段序列报告 failure 的概率；二者不是“总错误率”。
+3. **有参数和预计算成本**：正式定理含 `n=ω(log u)`、`n<u` 与输入无关的 `u^c` 位；非正式 `(1+o(1))` 还需更强展示条件。
+4. **固定宇宙**：无需紧最终容量不等于不受宇宙 `[u]` 限制的无限增长。
+5. **实现复杂**：多层哈希、adaptive prefixes、data blocks 和后台重组远比普通 Bloom filter 复杂；word-RAM 的 `O(1)` 不能直接解释为更高实践吞吐。
+6. **公开核查缺口**：阶段下标形式归纳、字面常数 10 的隐藏常数配平和迁移瞬时位级峰值仍为 Q1/Q3。保留这些缺口不等于断言原论文错误。
+7. **对手模型**：本组不把原文保证无条件扩张到自适应查询对手。
 
 ---
 
 ## 12. 后续研究
 
-【待 C】区分 insertion-only unknown-size、fully dynamic（含删除）、resizable-current-`n`；E1/E2 不得作确定结论；2026 预印本标明状态。
+后续工作不形成一条单轴的“替代链”。Aleph 把重点放在删除、无限增长和可运行实现；Kuszmaul–Walzer 说明删除型 dynamic filter 的额外空间下界；Resizable Retrieval 把空间参数推进到当前 `n` 并支持删除，但保留不同额外项和 whp 条件。由此产生四个开放方向：
+
+1. 在保留可比的最坏时间和当前规模空间时支持删除；
+2. 降低或消除 `u^c` 级全局随机性/预计算项；
+3. 将 Claim 13 与 §5 做成可复现实验实现，测量隐藏常数、迁移峰值与缓存行为；
+4. 明确 adaptive queries/adversary 下误报与 failure 的保证。
 
 ---
 
@@ -232,7 +285,7 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 
 ## 15. 参考文献
 
-【待 C 统一 BibTeX】正文已用关键文献：Liu–Yin–Yu ICALP 2020 / arXiv:2004.12465；Pagh–Segev–Wieder FOCS 2013（仓库 `1304.1188v2.pdf`）。引用审计见 `references/citation-audit.md`（C 主责；B 抽查技术章引用）。
+本稿引用的完整 BibTeX 元数据见 `references/bibliography.bib`；正文引用、DOI、原文位置、证据等级和限制逐项见 `references/citation-audit.md`。核心文献包括 Liu–Yin–Yu ICALP 2020、PSW FOCS 2013、SBF/DBF、Quotient/Cuckoo filter、Aleph 2024、Kuszmaul–Walzer 2024，以及作为 2026 预印本引用的 *Resizable Retrieval*。E1/E2 候选不会在证据升级前承担确定性比较。
 
 ---
 
@@ -244,7 +297,7 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 | issue-constant-10 | 字面常数 10 | 写原文 10 轮 + 未独立复算 |
 | Q2 data-block | §5 位级冗余 | 综述级；精算归 A |
 | Q3 空间峰值 | 迁移瞬时位级 | 量级 O(n) 层；位级开放 |
-| A/C 章节 | Day 5 定稿未入库 | 桥接段待替换 |
+| A 章节 | Day 5 定稿未入库 | §1–§3、§5 桥接待替换 |
 
 ## 附录 B. 整合贡献（过程）
 
@@ -252,5 +305,5 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 |---|---|
 | §6–§9（技术/实现/正确性/时间）及贯穿示例、图同步 | B |
 | §1–§3、§5、§9 空间/failure 精算 | A（待替换桥接） |
-| §4、§10–§12、§15 | C（待替换桥接） |
+| §4、§10–§12、§15 | C（v0.1 已整合，待成员审阅） |
 | §13–§14 | 共同 |
