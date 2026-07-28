@@ -128,3 +128,34 @@ Cursor Agent
 ### 最终使用方式
 辅助提纲与组织；正文依据个人笔记与原文核查。建议 commit：`draft(B): explain prefix matching and staged construction` / `draft(B): write operations correctness and complexity` / `review(B): verify model parameters and lower-bound wording`。
 
+---
+
+## 2026-07-28（Day 6）
+
+### 使用者
+张书铖（成员 B）
+
+### 使用工具
+Cursor Agent
+
+### 提问目的
+按 `work/day6.md` 完成 B 的整合、图同步、读者测试、Issue/会议记录与 PDF v1 尝试。
+
+### AI 回答摘要
+- 协助将 §6–§9 写入 `drafts/review-integrated.md`（15 部分骨架；A/C 章标桥接）。
+- 协助生成 `issues-day6.md`、`review-day6.md`（B 测 C 相关工作笔记 ≥5 条）、`meeting-day6.md`、`references/citation-audit.md`（B 技术引用抽查 + 待 C）。
+- 协助同步 `figures/{architecture,growth-process,query-insert-flow,proof-dependency}.md`。
+- 协助检测本机无 pandoc/xelatex，按规则记录 PDF 失败而非伪造。
+
+### 人工核查方式
+- 对照 Day 5 `section-B`、Claim 13、`pseudocode.md`、开放 Issue。
+- 对照 `notes/memberC/related-work.md` 做普通读者测试。
+- 强断言清单自检：字面 10、阶段归纳、ε≠δ、¬failed。
+
+### 核查结论
+- B 主责技术章已入整合稿；A/C 桥接未替换前不可称全文完成。
+- PDF v1 未生成（环境缺工具）；md 为可追溯源。
+
+### 最终使用方式
+辅助组织与过程文件；正文由笔记改写并人工定稿。建议 commit：`integrate(B): unify construction implementation and proof` / `figures(B): align diagrams with draft` / `review(B): verify stage invariants and operation bounds`。
+

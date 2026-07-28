@@ -1,5 +1,6 @@
 # 阶段增长过程（与 8 元素示例一一对应）
 
+> 与 `drafts/review-integrated.md` §6.5 同步（Day 6）。  
 > 来源：§1.4、§3.1、Claim 13。  
 > 与 `construction-notes.md` §6、`core-components.md` 同步。  
 > 横轴 `i` 指 **`i★=⌈log n⌉`（算法控制）**，不是证明段半开区间的自由变量。  

@@ -1,5 +1,6 @@
-# 查询 / 插入流程（Day 3：挂接组件小节）
+# 查询 / 插入流程
 
+> 与 `drafts/review-integrated.md` §7 同步（Day 6）。  
 > 来源：§3.1、Claim 13。  
 > 组件说明：`notes/memberB/core-components.md`  
 > 控制参数：`i★(n) = ⌈log n⌉`（仅按算法句；阶段下标冲突见组件 4 / Q3）
