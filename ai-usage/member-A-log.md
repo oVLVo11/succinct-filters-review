@@ -1,5 +1,29 @@
 # 成员刘威 AI 使用记录
 
+## 2026-07-28（Day 4）
+
+### 使用者、工具与任务
+
+刘威；Codex / 本地 PDF 文本定位。任务是依据 `work/day4.md` 补齐概率、空间、渐近条件与交叉审阅过程材料，不生成可直接提交的 Review 终稿。
+
+### AI 辅助内容
+
+- 定位并整理原论文式 (2) 的逐阶段误报求和；
+- 将第 5 节式 (3)–(5) 的三类失败事件与 Claim 13 的跨层 union bound 对齐；
+- 代入 Lemma 11 空间式并核查 Theorem 10 到 Theorem 1 的低阶项吸收；
+- 对 B 的伪代码和 C 的后续研究矩阵形成审阅问题与谨慎表述；
+- 更新证明表、提纲、会议记录和项目总览。
+
+### 人工核查要求与采用边界
+
+成员 A 需逐式对照原论文第 9–16 页的 Theorem 10、式 (2)、Lemma 11、Claim 13、式 (3)–(5)，并由 B/C 复核。阶段下标、字面常数 10、位级临时空间峰值和自适应对手口径没有被 AI 宣布为已解决。产物只作为阅读与写作过程证据，最终 Review 必须由成员本人改写并能口头解释。
+
+### 对应文件
+
+`notes/memberA/probability-and-space-proof.md`、`notes/proof-table.md`、`discussions/review-day4.md`、`discussions/meeting-day4.md`、`drafts/outline-v1.md`、`README.md`。
+
+---
+
 ## 2026-07-17
 
 ### 使用者
