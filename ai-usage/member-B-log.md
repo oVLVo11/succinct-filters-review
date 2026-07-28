@@ -98,3 +98,33 @@ Cursor Agent
 ### 最终使用方式
 辅助组织；全部结论经原文核对。建议 commit：`impl(B): define state and pseudocode for all operations` / `proof(B): verify migration invariants and worst-case work` / `review(B): align probability proof with stage construction`。
 
+---
+
+## 2026-07-28
+
+### 使用者
+张书铖（成员 B）
+
+### 使用工具
+Cursor Agent
+
+### 提问目的
+按 `work/day5.md` 撰写技术章节初稿，并完成对 A 的第一审阅、事实核查与会议记录中的 B 部分。
+
+### AI 回答摘要
+- 协助按 day5 十节结构组织 `drafts/section-B-technique-and-proof.md`。
+- 协助写入缺口口径（常数 10、阶段下标）、回应证明表中 C 对“线性 initialize”的批评。
+- 协助起草 B→A 的 6 条审阅意见与 fact-check 术语表。
+
+### 人工核查方式
+- 对照 Claim 13、式 (2)、Thm 10 与既有 `pseudocode.md`/`proof-table.md`。
+- 对照 A 的 `probability-and-space-proof.md` 检查衔接句。
+- 章节由笔记改写，未整段粘贴 AI 成稿；禁止性措辞已自检。
+
+### 核查结论
+- 初稿可送 C 审阅；开放 Q1/Q3 已在章首与正文标明。
+- 对 A 的审阅待 A 章节定稿后关闭。
+
+### 最终使用方式
+辅助提纲与组织；正文依据个人笔记与原文核查。建议 commit：`draft(B): explain prefix matching and staged construction` / `draft(B): write operations correctness and complexity` / `review(B): verify model parameters and lower-bound wording`。
+
