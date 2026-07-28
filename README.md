@@ -1,146 +1,80 @@
 # Succinct Filters for Sets of Unknown Sizes 论文 Review 项目
 
-本仓库用于三人小组研读论文 *Succinct Filters for Sets of Unknown Sizes*，并逐步完成一篇以中文为主体的论文 review。仓库重点保存从资料收集、论文阅读、问题讨论、草稿提纲、交叉审阅到最终成稿的过程记录。
+本仓库记录三人小组研读 Liu、Yin、Yu 的 *Succinct Filters for Sets of Unknown Sizes* 并逐步撰写中文 Review 的全过程。当前材料属于阅读笔记、证据矩阵、证明核查和草稿提纲，不是可直接提交的 AI 代写终稿。
 
-## 论文信息
+## 论文与目标
 
-- 论文题目：*Succinct Filters for Sets of Unknown Sizes*
-- 作者：Mingmou Liu, Yitong Yin, Huacheng Yu
-- arXiv：`arXiv:2004.12465`
-- 本地论文文件：`Succinct Filters for Sets of Unknown Sizes.pdf`
-- 主题关键词：Bloom filters, approximate membership, succinct data structures, dynamic dictionaries, unknown-size filters
+- 原论文：`Succinct Filters for Sets of Unknown Sizes.pdf`（ICALP 2020，arXiv:2004.12465）
+- PSW 下界原文：`1304.1188v2.pdf`
+- 核心问题：最终集合大小未知时，能否让 approximate membership filter 的空间随当前 `n` 增长，同时保持无漏报、误报率 `ε` 和高概率最坏常数操作时间？
+- 核心结果：主体空间为 `n(log(1/ε)+log log n+O(log log log u))` 位，另有输入无关的 `u^c` 位预计算空间；无 failure 时插入和查询均为 worst-case `O(1)`。
 
 ## 小组分工
 
-| 角色 | 姓名 | 主要负责内容 |
-|---|---|---|
-| 成员 A | 刘威 | 问题模型、基本定义、理论背景、空间下界、参数关系 |
-| 成员 B | 张书铖 | 核心构造、prefix matching、阶段迁移、数据结构实现、证明依赖 |
-| 成员 C | 陈戚 | 相关研究、后续研究、参考文献、论文评价 |
+| 成员 | 姓名 | 主责 | Day 4 状态 |
+|---|---|---|---|
+| A | 刘威 | 模型、理论背景、概率、空间、下界和参数 | 已补误报预算、两级 failure 并合、空间与渐近条件，并审阅 B/C |
+| B | 张书铖 | 核心构造、prefix matching、阶段迁移、伪代码和时间证明 | 已完成抽象伪代码、无漏报与时间框架、证明表操作列 |
+| C | 陈戚 | 经典/后续研究、引用、评价和可读性审阅 | 已完成 2020 年后矩阵、三篇 E3 核验及共同证明表审阅 |
 
-交叉审阅安排：
+交叉审阅：A 审 B 的伪代码和复杂度；B 审 A 的概率/空间推导；C 审 A+B 的证据可追溯性；A+B 核查 C 的模型可比性。
 
-- B 审阅 A 的问题定义、术语和下界解释。
-- C 审阅 B 的技术路线和实现说明。
-- A 审阅 C 的相关工作分类和理论结果表述。
+## 当前进度（Day 4 整合）
 
-## 当前进度
+已完成：
 
-目前处于 Day 2 收尾阶段：
+- A：`notes/memberA/probability-and-space-proof.md`
+- B：`notes/memberB/pseudocode.md`、`notes/memberB/proof-notes.md`
+- C：`notes/memberC/post-2020-work.md`、`references/post-2020-matrix.md`
+- 共同证明链：`notes/proof-table.md`
+- 第二轮审阅与会议：`discussions/review-day4*.md`、`discussions/meeting-day4.md`
+- 三人 AI 使用日志：`ai-usage/`
+- Day 4 三人材料整合提纲：`drafts/outline-v1.md`
 
-- 已创建 GitHub 仓库并建立初始版本历史。
-- 已保存论文 PDF、课程要求和工作计划。
-- 成员 A 已完成正式模型、Theorem 1/10 参数、空间下界和高概率语义的 Day 2 核查。
-- 成员 B 已完成公式 (2)、Claim 13、8 元素阶段示例及查询/插入流程的 Day 2 核查。
-- 已将 A/B 阶段结论汇总到 `discussions/meeting-day2.md`。
-- 已将 review 提纲更新为 Day 2 A/B 材料整合版：`drafts/outline-v1.md`。
-- 已按 Q0-Q4 更新问题清单：`discussions/questions.md`。
-- 已建立 AI 使用记录目录：`ai-usage/`。
-- 成员 C 的相关工作笔记、来源清单和文献矩阵仍待补齐，因此 Day 2 尚未三人完整验收。
+仍未关闭：
 
-## 仓库结构
+- Claim 13 的阶段下标与存储归纳；
+- 原文字面常数 10 的隐藏常数配平；
+- 初始化/销毁/临时副本的位级空间峰值；
+- 底层 data block 冗余的逐项展开；
+- 自适应对手是否落在原文概率口径内。
 
-```text
-.
-├── README.md
-├── AGENTS.md
-├── Plan.md
-├── Succinct Filters for Sets of Unknown Sizes.pdf
-├── ai-usage/
-│   ├── member-A-log.md
-│   └── member-B-log.md
-├── discussions/
-│   ├── meeting-day2.md
-│   └── questions.md
-├── drafts/
-│   └── outline-v1.md
-├── figures/
-│   ├── growth-process.md
-│   └── query-insert-flow.md
-├── notes/
-│   ├── memberA/
-│   │   ├── paper-reading.md
-│   │   ├── definitions.md
-│   │   └── lower-bound-notes.md
-│   ├── memberB/
-│   │   ├── paper-reading.md
-│   │   ├── construction-notes.md
-│   │   └── proof-notes.md
-│   └── memberC/
-└── work/
-    └── day1.md
-```
+这些项目必须在正文中标为条件或缺口，不得改写成小组已经独立证明。
 
-## 主要入口
-
-- 工作计划：`Plan.md`
-- 课程/项目要求：`AGENTS.md`
-- Review 初版提纲：`drafts/outline-v1.md`
-- 问题清单：`discussions/questions.md`
-- 成员 A 笔记：`notes/memberA/`
-- 成员 B 笔记：`notes/memberB/`
-- 图示文字版：`figures/`
-- AI 使用记录：`ai-usage/`
-
-## 过程记录原则
-
-本项目重视过程分，因此每次推进应尽量满足：
-
-- 每位成员每天至少产生 2 次有实际内容的 commit。
-- commit 信息要说明具体工作，不使用 `update`、`final`、`修改` 这类模糊信息。
-- 重要理解、疑问和争议进入 `discussions/questions.md` 或成员个人笔记。
-- AI 辅助必须记录问题、回答摘要、人工核查方式和最终使用方式。
-- 主要章节后续尽量通过分支和 Pull Request 合并，保留审阅痕迹。
-
-推荐 commit message 示例：
+## 目录导航
 
 ```text
-notes(A): clarify unknown-size filter model
-notes(B): explain prefix matching construction
-refs(C): add related work comparison entries
-draft: revise review outline
-ai-log(A): record verification of lower-bound question
+AGENTS.md                    课程与学术诚信要求
+Plan.md                      总体工作计划
+work/day1.md ... day4.md     每日任务分配
+notes/memberA/               A 的模型、下界、概率与空间笔记
+notes/memberB/               B 的构造、伪代码与证明笔记
+notes/memberC/               C 的相关工作与评价证据
+notes/proof-table.md         六类结论共同证明表
+references/                  文献清单、BibTeX 和比较矩阵
+discussions/                 会议、问题、审阅和 Issue 记录
+drafts/outline-v1.md         当前 Review 提纲
+figures/                     结构、流程与证明依赖图
+ai-usage/                    三位成员的 AI 使用及人工核查记录
 ```
 
-## AI 使用说明
+## 证据状态约定
 
-允许使用 AI 辅助理解概念、整理核查问题、检查逻辑跳跃或格式问题，但不接受 AI 代写最终 review。所有 AI 使用应写入 `ai-usage/`，并由对应成员对照原论文或正式文献人工核查。
+- Q0：已回原文核查到当前所需精度；
+- Q1：结论明确但仍需证明或交叉复核；
+- Q2：核心机制尚未理解；
+- Q3：论文省略或黑盒内部细节需要展开；
+- Q4：成员表述存在分歧。
 
-当前记录：
+后续研究另用 E1–E3 标注阅读深度。引用某论文、标题相近或支持“dynamic”都不等于在同一 unknown-size 模型下改进本文。
 
-- `ai-usage/member-A-log.md`
-- `ai-usage/member-B-log.md`
+## 版本与学术诚信
 
-## Git 使用说明
+- 每位成员应分批提交个人笔记、审阅回应和修订，不在截止日前一次性上传完整文稿。
+- commit 信息应说明具体贡献，例如 `proof(A): derive false-positive budget`。
+- AI 只用于定位、解释、列核查问题和检查逻辑；每次使用须在 `ai-usage/` 写明原问题、回答摘要、人工核查来源和采用边界。
+- 最终 Review 由成员本人阅读原文后撰写。每位成员必须能解释核心论点、负责内容、主要参考文献、修改过程和 AI 使用情况。
 
-查看当前状态：
+## 下一阶段
 
-```powershell
-git status
-```
-
-提交一次明确的工作：
-
-```powershell
-git add <文件路径>
-git commit -m "类型: 具体说明"
-git push
-```
-
-同步远程更新：
-
-```powershell
-git pull
-```
-
-建议成员在修改前先 `git pull`，避免多人同时修改同一文件造成冲突。
-
-## 后续待办
-
-- 陈戚补充 `notes/memberC/` 中的相关研究笔记。
-- 建立 `references/bibliography.bib`、`references/source-list.md`、`references/literature-matrix.md`。
-- 陈戚审阅张书铖的 8 元素示例，刘威审阅相关工作矩阵。
-- 刘威正式审阅张书铖的阶段示例，张书铖复核刘威对审阅意见的修改。
-- Day 3 解决 Claim 13 下标对齐、常数 10 配平及底层 `D(m,ell)` 的 Q1/Q2 问题。
-- 将 `figures/` 中已经同步的文字流程说明逐步转为正式图。
-- 在证据核查完成后，将 `drafts/outline-v1.md` 逐步扩展为分章节草稿。
+Day 5 可在现有证据基础上分别起草“问题与重要性”“核心技术与实现”“相关研究与评价”，但所有 Q1/Q3 项须保留引用和限制条件。建议先由三位成员分别人工审核自己的 Day 4 产物，再形成分阶段 commit 与交叉 review。
