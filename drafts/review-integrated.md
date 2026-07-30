@@ -1,7 +1,7 @@
-# Succinct Filters for Sets of Unknown Sizes：论文 Review（整合稿 v0.2）
+# Succinct Filters for Sets of Unknown Sizes：论文 Review（最终稿）
 
-- **状态**：Day 6 第二版整合；**非终稿，待成员审阅**
-- **整合说明**：技术直觉 / 实现 / 正确性与时间证明由张书铖（B）定稿并入；相关研究、评价、局限与后续研究由陈戚（C）完成第一轮整合；问题定义、主结果与下界仍待 A 的 Day 5 章节替换桥接。未关闭 Q1/Q3 在正文中显式保留。
+- **状态**：最终定稿；Q1/Q3 作为公开技术限制保留，不属于待完成工作
+- **整合说明**：问题定义、主结果、PSW 下界与概率/空间核查由刘威（A）整合；技术直觉、实现、正确性与时间证明由张书铖（B）整合；相关研究、评价、局限与后续研究由陈戚（C）整合。
 - **贯穿教学示例**：连续插入 8 个抽象元素 `x1…x8`（§6.5）；不承担一般证明。
 - **图示**：`figures/architecture.md`、`figures/query-insert-flow.md`、`figures/growth-process.md`、`figures/proof-dependency.md`
 
@@ -9,13 +9,17 @@
 
 ## 1. 摘要
 
-【待 A 定稿】桥接要点：在集合最终规模未知时，维护动态 approximate membership（filter）与 dictionary；filter 空间在适当条件下达 `(1+o(1))n(log(1/ε)+log log n)` 位，插入与查询在无 failure 时为 worst-case `O(1)`（整段序列 failure 概率 ≤ `δ`）。本 Review 解释问题为何难、相对 PSW 的改进、构造与证明如何核查，并标明小组未关闭缺口。
+本文研究最终集合规模或紧容量上界事先未知时的动态 approximate membership。其难点在于，filter 为了节省空间已经丢弃了枚举原 key 所需的信息，因而不能像 exact dictionary 那样直接重建扩容。Liu–Yin–Yu 通过变长哈希前缀、prefix matching、短串 truth table、长串 succinct 结构和两代去均摊迁移，在 `n=ω(log u)`、`n<u` 时使用 `n(log(1/ε)+log log n+O(log log log u))+u^c` 位，并在 no-failure 执行中给出插入和查询的 worst-case `O(1)`。对任意插入序列，整个过程曾报告 failure 的概率至多为 `δ=u^{-C}`；无 failure 时无漏报，非成员误报率至多为 `ε`。本 Review 详细解释这一结果与 PSW 信息论下界的关系，重建其实现、正确性、误报、failure、时间和空间论证的依赖链，并公开保留阶段下标、字面常数 10 和位级迁移峰值等 Q1/Q3 核查项。
 
 ---
 
 ## 2. 引言
 
-【待 A 定稿】桥接要点：membership 应用广泛；dictionary 精确、filter 允许误报但不允许漏报；传统结构常按容量上界 `N` 占空间；当 `n≪N` 或 `N` 不可靠时浪费严重。核心问题：空间能否始终依赖当前规模，同时保持误报、无漏报与最坏情况常数时间？
+成员查询出现在缓存、存储、网络和数据库等诸多系统中。Exact dictionary 保留足够的 key 信息以回答精确查询；filter 允许将少量非成员错认为成员，但对已插入元素不允许漏报，因而能用更少比特完成预过滤。
+
+当容量上界 `N` 已知时，结构可以在初始化时为 `N` 个 key 配置空间。但在一个持续增长的系统中，紧的最终上界常常无法事先得到：高估 `N` 会在 `n≪N` 时浪费空间，低估又会触发扩容。对 dictionary，扩容可通过枚举原 key 重建；对 filter，内部状态未必足以恢复原 key，因而这个看似平常的操作成为理论难点。
+
+论文的核心问题是：能否在没有紧最终容量上界时，让空间始终依赖当前规模 `n`，同时保持无漏报、误报率至多 `ε`，并把插入和查询都做到高概率意义下的最坏常数时间？PSW 已证明 unknown-size 设定必须支付额外 `n log log n` 信息，并给出接近下界的构造；LYY 的任务是在收紧该项领先常数的同时，解决去均摊扩容和位级 succinctness 之间的冲突。
 
 下文先给出问题与结果（A），再述相关工作（C），然后展开构造与证明（B），最后评价与后续（C）。
 
@@ -23,19 +27,24 @@
 
 ## 3. 问题定义和研究意义
 
-【待 A 整合 `definitions.md` / Day 5 问题章】
-
 **全局符号（全文统一；`log` 以 2 为底）**
 
 | 符号 | 含义 |
 |---|---|
 | `[u]` | 全集 `{0,…,u−1}` |
-| `n` | 插入次数（insertion-sequence）；与去重后 `|S|` 的差别见 A |
+| `S` | 当前逻辑集合 `S⊆[u]` |
+| `n` | 当前插入规模；本文默认互异 key 序列 |
 | `ε` | 误报率（false positive rate） |
 | `δ=u^{−C}` | 曾报告 failure 的概率上界 |
 | `N` | 传统预置容量上界（本文希望摆脱对紧 `N` 的依赖） |
+| `w` | word-RAM 字长，Theorem 10 中 `w=Θ(log u)` |
+| `c,C` | 预计算空间和 failure 指数的常数，`0<c<1`、`C>1` |
 
-**口径**：正确性与时间保证均 **conditioned on no failure**；`ε` 与 `δ` 不可混用。
+`insert(x)` 将 key 加入 `S`；`lookup(x)` 回答成员性。Dictionary 不允许误报或漏报；filter 对 `x∈S` 必须回答 YES，对 `x∉S` 允许以至多 `ε` 的概率回答 YES。“Unknown size”指初始化时不知道最终规模或紧的 `N`，不是 `u` 未知，也不是结构不知道当前 `n`。
+
+已知容量 filter 的主信息论成本为 `N log(1/ε)` 位。Unknown-size 模型要求每个中间时刻的空间都跟随当前 `n`，PSW 下界证明除误报信息外还需支付近似 `n log log n` 的额外信息。这使 LYY 的目标不是单纯“会扩容”，而是在这一不可避免的空间尺度上进一步实现 worst-case `O(1)` 操作。
+
+**概率口径**：`ε` 是 no-failure 条件下的非成员误报率；`δ` 是任意插入序列上“整个过程曾报告 failure”的序列级事件上界。无漏报和操作时间的对外说明均保留 no-failure 条件。
 
 ---
 
@@ -79,11 +88,20 @@ InfiniFilter 目前为 E2；Li 等人 2023/2024 的 exact dynamic dictionary 工
 
 ## 5. 论文主要结果
 
-【待 A 定稿】与构造对照时采用：
+### 5.1 定理层次
 
-- **正式 Theorem 10**：`n=ω(log u)`、`n<u`；主体空间 `n(log(1/ε)+log log n+O(log log log u))` + 输入无关 `u^c`；无 failure 时 FP≤`ε`、操作 O(1)；failure≤`δ`。
-- **非正式 Theorem 1**：`n>u^{0.001}` 等条件下写成 `(1+o(1))…`；**不得**把该条件写成 Thm 10 的唯一前提。
-- **相对 PSW**：在 `ε=o(1)` 等条件下钉死 `log log n` 领先常数，并给出 whp 最坏 O(1) 而非期望均摊插入（评价措辞见 C；最优性依赖 PSW 下界）。
+| 结果 | 参数与空间 | 时间、误报与 failure |
+|---|---|---|
+| 正式 Theorem 10 | `n=ω(log u)`、`n<u`；`n(log(1/ε)+log log n+O(log log log u))+u^c` 位 | 每次插入/查询 worst-case `O(1)`；序列级 failure 至多 `δ=u^{-C}`；no-failure 时 FP`≤ε`、无 FN |
+| 非正式 Theorem 1 | `n>u^{0.001}` 时化简为 `(1+o(1))n(log(1/ε)+log log n)` | 最坏常数时间 with high probability |
+
+Theorem 1 的 `n>u^{0.001}` 是用来将 `O(log log log u)` 和 `u^c` 吸收进 `(1+o(1))` 的更强展示条件，不是 Theorem 10 的字面范围。
+
+### 5.2 PSW 下界与领先项
+
+PSW Theorem 3.1 在一个规模区间内对每元素位数 `β` 给出参数化下界。证明先固定数据结构的随机性，再用几何块分解插入序列；在若干中间时刻中找到一个正回答集合增长很小的块，并用 Chernoff 界控制该块中预先误报的元素数；然后把数据结构的中间状态当作编码的一部分，利用块前后正回答集合压缩该块。如果所有中间状态都太小，就能把至少 `u^n/3` 条序列编码得比 `n log u-O(1)` 的计数下界更短，导出矛盾。
+
+PSW Theorem 1.1 字面得到 `(1-o(1))n log(1/ε)+Ω(n log log n)`；更细的 `(1-O(ε))` 领先系数来自 Theorem 3.1 的参数选择。因此 LYY 式 (2) 只解释本构造为何出现 `log log n`，PSW 编码论证才说明它对 unknown-size 结构普遍不可避免。当 `ε=o(1)` 时，LYY 上界与 PSW 参数化下界的 `log log n` 领先项对齐；对固定 `ε`，不将 `(1-O(ε))` 扩张为严格系数 1。
 
 ---
 
@@ -223,12 +241,41 @@ InfiniFilter 目前为 E2；Li 等人 2023/2024 的 exact dynamic dictionary 工
 
 ### 9.2 空间（A 主核；B 结构约束）
 
-Lemma 11 代入 `ℓ_{⌈log n⌉}` 得主体 `n(log(1/ε)+log log n+O(log log log u))+u^c`。  
-B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立全量 filter。位级迁移峰值仍为 Q3。
+Lemma 11 在 `n` 次插入后使用
+
+```text
+n(ℓ_{⌈log n⌉}-log n+O(log log log u))+u^c
+```
+
+位。代入式 (2)，并使用 `⌈log n⌉-log n=O(1)`、`log⌈log n⌉=log log n+O(1)`，可得
+
+```text
+n(log(1/ε)+log log n+O(log log log u))+u^c.
+```
+
+其中 `u^c` 是与输入无关的全局哈希/查表预计算空间，不得从正式定理中省略。在 Theorem 1 的 `n>u^{0.001}` 展示条件下，选择 `c<0.001` 得 `u^c=o(n)`，且 `log log log u=o(log log n)`，因而可化简为 `(1+o(1))n(log(1/ε)+log log n)`。
+
+B 的结构核查确认，同时只有相邻两代 `D/T` 承担已插入前缀，而不保留 `Θ(log n)` 个独立全量 filter。但四次查询本身不能证明位级峰值；初始化下一层、销毁上一层和迁移临时态的领先常数由 Lemma 11 的正式空间命题承担，本组的独立位级峰值核算仍为 Q3。
 
 ### 9.3 Failure ≤ `δ`（A）
 
-每层 `D_i` 经式 (3)(4)(5) 等到 `u^{−2C}`，对 ≤`log u` 层并合到 `u^{−C}`。B 抽查骨架同意；自适应对手不作无条件扩张。
+对单个已知容量结构 `D(m,ℓ)`，第 5 节分别控制主表桶过载、fingerprint collection 超出表示预算、以及共享 `h_d(x)∘h_s(x)` 的 datapoint 过多三类事件。式 (5) 将它们并合为
+
+```text
+(m/log u)exp(-(c3-1)^2 log u/2)
++ u^{-c5}
++ m·2^{-(c4-0.01)log u}.
+```
+
+因 `m<u`，先选择足够大的常数 `c3,c4,c5`，再选满足有限独立性要求的 `c1`，可使单个 `D_i` 整个生命周期的 failure 概率至多为 `u^{-2C}`。这是常数存在性论证，不给出未经原文支持的最小具体常数。
+
+Claim 13 在 `n<u` 时最多创建 `⌈log u⌉` 个容量层，再用一次 union bound：
+
+```text
+Σ_i u^{-2C} ≤ (⌈log u⌉)u^{-2C} ≤ u^{-C}=δ,
+```
+
+最后一步对足够大的 `u` 和 `C>1` 成立。这对应 Theorem 10 的序列级“曾报告 failure”事件。输入序列可以是任意的，概率取自预计算随机比特；本组不将原文口径无条件扩张到自适应查询对手。
 
 ---
 
@@ -273,7 +320,11 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 
 ## 13. 小组评价
 
-【三人共同 · 待会后补】事实：论文在所述模型下给出同时达成空间主项与 whp 最坏常数时间的构造。观点：讲解主线宜强调四结构 + 去均摊迁移；Review 必须公开 Q1/Q3。
+我们认为，这篇论文最值得学习的不是某个孤立的哈希技巧，而是如何把信息论主项、当前规模空间、误报预算、无漏报、failure 概率和最坏更新时间组合起来。变长前缀解决不同插入阶段的误报预算，truth table 避免短前缀在扩展时产生过高空间开销，相邻两代 `D/T` 使查询在迁移期间仍只访问常数个结构，每插常数轮后台工作再将扩容去均摊。这些部件的配合，而非单个部件，构成论文的主要技术价值。
+
+从证明表达看，论文将许多细节压缩在黑盒接口和“easy to check”式句子中，阅读门槛很高。要让结论可核验，必须把论证拆成不同责任链：式 (2) 控制误报，Claim 13 给出迁移控制流，Lemma 11 承担 prefix matching 的空间/时间/failure 接口，第 5 节控制底层坏事件，PSW 下界则只用于评价空间的不可避免性，不参与构造正确性的推导。
+
+这篇论文的局限同样明显：它是 insertion-only 结果，依赖固定 universe、word-RAM 和 `u^c` 预计算，实现复杂度也远高于普通 Bloom filter。因此它的主要价值是在明确理论模型中展示一组强联合保证，而不是直接预测工程上的绝对吞吐量优势。本 Review 保留 Q1/Q3，是为了区分“原论文给出的正式命题”和“本组已经独立展开的验证”，而不是据此断言原结果错误。
 
 ---
 
@@ -285,11 +336,27 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 
 ## 15. 参考文献
 
-本稿引用的完整 BibTeX 元数据见 `references/bibliography.bib`；正文引用、DOI、原文位置、证据等级和限制逐项见 `references/citation-audit.md`。核心文献包括 Liu–Yin–Yu ICALP 2020、PSW FOCS 2013、SBF/DBF、Quotient/Cuckoo filter、Aleph 2024、Kuszmaul–Walzer 2024，以及作为 2026 预印本引用的 *Resizable Retrieval*。E1/E2 候选不会在证据升级前承担确定性比较。
+1. M. Liu, Y. Yin, and H. Yu. *Succinct Filters for Sets of Unknown Sizes*. ICALP 2020, LIPIcs 168, 79:1–79:19. DOI: `10.4230/LIPIcs.ICALP.2020.79`.
+2. B. H. Bloom. *Space/Time Trade-offs in Hash Coding with Allowable Errors*. Communications of the ACM 13(7), 1970, 422–426. DOI: `10.1145/362686.362692`.
+3. L. Carter, R. Floyd, J. Gill, G. Markowsky, and M. N. Wegman. *Exact and Approximate Membership Testers*. STOC 1978, 59–65. DOI: `10.1145/800133.804332`.
+4. P. S. Almeida, C. Baquero, N. Preguiça, and D. Hutchison. *Scalable Bloom Filters*. Information Processing Letters 101(6), 2007, 255–261. DOI: `10.1016/j.ipl.2006.10.007`.
+5. D. Guo, J. Wu, H. Chen, and X. Luo. *Theory and Network Applications of Dynamic Bloom Filters*. IEEE INFOCOM 2006, 1–12. DOI: `10.1109/INFOCOM.2006.325`.
+6. Y. Arbitman, M. Naor, and G. Segev. *Backyard Cuckoo Hashing: Constant Worst-Case Operations with a Succinct Representation*. FOCS 2010, 787–796.
+7. E. D. Demaine, F. Meyer auf der Heide, R. Pagh, and M. Pătrașcu. *De Dictionariis Dynamicis Pauco Spatio Utentibus*. LATIN 2006, 349–361. DOI: `10.1007/11682462_34`.
+8. A. Pagh, R. Pagh, and S. S. Rao. *An Optimal Bloom Filter Replacement*. SODA 2005, 823–829. DOI: `10.1145/1070432.1070548`.
+9. R. Pagh, G. Segev, and U. Wieder. *How to Approximate a Set Without Knowing Its Size in Advance*. FOCS 2013, 80–89. DOI: `10.1109/FOCS.2013.17`.
+10. R. Raman and S. S. Rao. *Succinct Dynamic Dictionaries and Trees*. ICALP 2003, 357–368. DOI: `10.1007/3-540-45061-0_30`.
+11. M. A. Bender et al. *Don't Thrash: How to Cache Your Hash on Flash*. PVLDB 5(11), 2012, 1627–1637. DOI: `10.14778/2350229.2350275`.
+12. B. Fan, D. G. Andersen, M. Kaminsky, and M. D. Mitzenmacher. *Cuckoo Filter: Practically Better Than Bloom*. CoNEXT 2014, 75–88. DOI: `10.1145/2674005.2674994`.
+13. N. Dayan, I.-O. Bercea, and R. Pagh. *Aleph Filter: To Infinity in Constant Time*. PVLDB 17(11), 2024, 3644–3656. DOI: `10.14778/3681954.3682027`.
+14. W. Kuszmaul and S. Walzer. *Space Lower Bounds for Dynamic Filters and Value-Dynamic Retrieval*. STOC 2024, 1153–1164. DOI: `10.1145/3618260.3649649`.
+15. W. Kuszmaul, A. Putterman, T. Xu, H. Zhou, and R. Zhou. *Resizable Retrieval*. arXiv:2606.15944, 2026 预印本（截至 2026-07-28 未核实正式发表）.
+
+完整 BibTeX 元数据见 `references/bibliography.bib`；正文引用、原文位置、证据等级和限制见 `references/citation-audit.md`。E1/E2 候选仅保留在研究矩阵，未在本节承担确定性比较。
 
 ---
 
-## 附录 A. 开放问题（带入 Day 7）
+## 附录 A. 最终保留的技术限制
 
 | ID | 内容 | 正文处理 |
 |---|---|---|
@@ -297,13 +364,12 @@ B 确认：同时仅常数层 `D/T` 全量活跃，不保留 `log n` 个独立�
 | issue-constant-10 | 字面常数 10 | 写原文 10 轮 + 未独立复算 |
 | Q2 data-block | §5 位级冗余 | 综述级；精算归 A |
 | Q3 空间峰值 | 迁移瞬时位级 | 量级 O(n) 层；位级开放 |
-| A 章节 | Day 5 定稿未入库 | §1–§3、§5 桥接待替换 |
 
 ## 附录 B. 整合贡献（过程）
 
 | 部分 | 主整合 |
 |---|---|
 | §6–§9（技术/实现/正确性/时间）及贯穿示例、图同步 | B |
-| §1–§3、§5、§9 空间/failure 精算 | A（待替换桥接） |
-| §4、§10–§12、§15 | C（v0.1 已整合，待成员审阅） |
+| §1–§3、§5、§9 空间/failure 精算 | A |
+| §4、§10–§12、§15 | C |
 | §13–§14 | 共同 |

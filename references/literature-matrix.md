@@ -3,6 +3,7 @@
 - 日期：2026-07-19 建表；2026-07-21 更新三项后续全文核验
 - 负责人：陈戚（成员 C）
 - 规则：`待核验` 不得在后续改写时自动变成肯定结论。
+- 当前状态（2026-07-30）：正文实际采用的关键比较均已进入 `citation-audit.md` 并按 E1–E3 限定措辞；本表剩余“待核验”是有意保留的摘要级证据边界，不再表示等待某位成员完成才能定稿。
 
 | 工作 | 年份 | 问题模型 | 容量是否预知 | 插入 | 查询 | 删除 | 空间 | 误报模型 | 最坏情况保证 | 与本文关系 | 核验状态 | 证据位置 |
 |---|---:|---|---|---|---|---|---|---|---|---|---|---|
@@ -14,7 +15,7 @@
 | Raman-Rao | 2003 | dynamic exact dictionary | 空间可随当前 `n` | expected amortized `O(1)` | worst-case `O(1)` | 摘要支持，expected amortized | `B+o(B)` | exact | 更新不是最坏 | PSW 黑盒与内存模型，[29] | 仅看摘要 | 原论文 79:2/79:4；正式摘要 |
 | Deamortized/Backyard cuckoo hashing | 2009/2010 | dynamic exact dictionary | 待核验 | worst-case `O(1)` whp | worst-case `O(1)` whp | 待核验 | 2010 摘要有 `(1+o(1))B` 变体 | exact | 多项式序列 whp | 去均摊与 succinct 背景，[2]/[3] | 仅看摘要 | 79:4；arXiv:0912.5424 |
 | Pagh-Pagh-Rao | 2005 | 已知容量 succinct filter | 已知 `N` | expected amortized `O(1)` | `O(1)` | 摘要支持 | `(1+o(1))N log(1/epsilon)`（原论文转述） | 一侧错误 | 更新为均摊期望 | 已知容量最优对照，[27] | 仅看摘要 | 79:2/79:4；SODA 摘要 |
-| Pagh-Segev-Wieder | 2013 | unknown-size filter | 否 | expected amortized `O(1)`（本文转述） | worst-case `O(1)`（本文转述） | 待核验 | 下界与 `n(log(1/epsilon)+O(log log n))` 上界 | 无 FN；FP `epsilon` | 另有多空间的 whp 最坏版本 | 最直接前作，[28] | 仅看摘要 | 79:2-79:5；PSW 摘要 |
+| Pagh-Segev-Wieder | 2013 | unknown-size filter | 否 | expected amortized `O(1)`（上界） | worst-case `O(1)`（查询） | 在其定义的合法删除条件下支持 | 下界与 `n(log(1/epsilon)+O(log log n))` 上界 | 无 FN；FP `epsilon` | 另有多空间的 whp 最坏版本 | 最直接前作，[28] | 已核查定理与下界证明 | PSW Theorem 3.1 及正文；LYY 79:2-79:5 |
 | Liu-Yin-Yu | 2020 | unknown-size filter | 否 | worst-case `O(1)` | worst-case `O(1)` | 用户删除不支持 | `n(log(1/epsilon)+log log n+O(log log log u)) + u^c` | 条件于无 failure，FP ≤ `epsilon`；无 FN | ever-failure ≤ `u^{-C}` | 本项目主论文 | 已核查定理 | Theorem 10, 79:9 |
 | Liu-Yin-Yu dictionary | 2020 | unknown-size exact key-value dictionary | 否 | worst-case `O(1)` | worst-case `O(1)` | 主定理未列 | `n(log(u/n)+v+O(log log log u)) + u^c` | exact，条件于无 failure | ever-failure ≤ `u^{-C}` | 本文第二主结果 | 已核查定理 | Theorem 12, 79:11 |
 | Adaptive filter (Bender et al.) | 2018 | 对历史查询自适应的 AMQ | 待核验 | 摘要称更新 whp 最坏常数 | 摘要称 whp 最坏常数 | 待核验 | 本地组件 lower-order optimal（完整系统待核） | 每次查询对历史保持 `epsilon` | 摘要级 | 不同的“adaptive”轴，[5] | 仅看摘要 | arXiv 摘要；79:4 |

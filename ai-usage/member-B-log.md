@@ -159,3 +159,13 @@ Cursor Agent
 ### 最终使用方式
 辅助组织与过程文件；正文由笔记改写并人工定稿。建议 commit：`integrate(B): unify construction implementation and proof` / `figures(B): align diagrams with draft` / `review(B): verify stage invariants and operation bounds`。
 
+## 2026-07-30 状态对账
+
+- 先前“对 A 的审阅待定稿后关闭”已完成：A 章已入库，B 的审查结果见 `review-day5.md` 与 `review-day6.md`。
+- 技术章已合入 v1.0；阶段下标与字面常数 10 分别按 Q1/Q3 降级，不再作为等待 A/B 的协作项。
+- PDF 已由完整源稿重生成并通过逐页复核；小组最终决定不再为 Day 7 口头交流或 B 的最终签字建立文件，本条不把相关活动写成已经发生。
+
+### 项目最终状态
+
+技术章、整合稿和最终 PDF 已定稿；除正文公开保留的 Q1/Q3 外，不再存在 B 的文件待办。
+

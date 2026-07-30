@@ -24,6 +24,58 @@
 
 ---
 
+## 2026-07-30（Day 5–Day 6 章节成稿与整合）
+
+### 使用者与原始任务
+
+刘威（成员 A）。原始请求：B、C 已完成最新 Day 5、Day 6 工作，根据当前进度和工作规划补齐 A 的相关内容，随后选择直接形成完整成稿，暂不创建 Git commit 或推送。
+
+### AI 读取的本地证据
+
+- `work/day5.md`、`work/day6.md`、`discussions/issues-day6.md`；
+- A 的 `definitions.md`、`lower-bound-notes.md`、`probability-and-space-proof.md`；
+- B 的技术章与证明材料，C 的相关研究章和引用审计；
+- 本地 LYY 论文 PDF 中 Theorem 1、Theorem 10、式 (2)、Lemma 11、Claim 13 及第 5 节的概率链；
+- 本地 PSW PDF 中 Theorem 3.1、Lemmas 3.2–3.4、式 (3.1)–(3.2)。
+
+### AI 辅助完成的内容
+
+1. 新建 `drafts/section-A-problem-and-significance.md`，系统解释模型、Theorem 1/10、式 (2)、PSW 压缩下界、空间/failure 计算、研究意义和限制。
+2. 补入 A 对 B 的七条文本审阅和对 C 的五项比较措辞核查。
+3. 将 A 负责的摘要、引言、定义、主结果、PSW 下界、空间与 failure 论证整合进 `drafts/review-integrated.md`。
+4. 更新 Day 5/6 事实核查、问题清单、读者测试、会议准备和八项正文—文献对应抽查。
+
+### 关键核查与修正
+
+- 正式 Theorem 10 是 `n=ω(log u)`、`n<u`；Theorem 1 的 `n>u^{0.001}` 只服务于 `(1+o(1))` 化简展示。
+- PSW Theorem 1.1 字面给出 `Ω(n log log n)`；更精细的 `(1-O(ε))` 领先系数来自 Theorem 3.1 的参数化形式。
+- LYY 式 (2) 只解释本构造的上界直觉，不替代 PSW 的普遍下界证明。
+- `ε` 与 `δ=u^{-C}` 分别表示 no-failure 查询误报与序列级结构 failure，未合并为“总错误率”。
+- Claim 13 阶段下标、字面常数 10 和位级迁移峰值仍保留为 Q1/Q3，没有伪装成小组已独立证明。
+
+### 当时的限制与后续复核（历史记录）
+
+- AI 没有替代真实组会、脱稿复述或 B/C 的最终签字审阅；这些在当时会议记录中保持未完成，后经小组决定不再形成 Day 7 文件。
+- 成员 A 可按新章节末的证据定位表，逐项回到两篇 PDF 重新计算和用自己的语言复述。
+- 最终对外使用前，需重新核对 2026 预印本状态，并运行完整参考文献生成与排版流程。
+
+### 对应修改文件
+
+```text
+drafts/section-A-problem-and-significance.md
+drafts/review-integrated.md
+discussions/review-day5.md
+discussions/fact-check-day5.md
+discussions/meeting-day5.md
+discussions/issues-day6.md
+discussions/review-day6.md
+discussions/meeting-day6.md
+references/citation-audit.md
+ai-usage/member-A-log.md
+```
+
+---
+
 ## 2026-07-17
 
 ### 使用者
@@ -364,3 +416,21 @@ AI 将下界证明整理为五步：固定随机性、选择正回答集合增�
 - 完善 `notes/memberA/lower-bound-notes.md` §14；
 - 更新 A 的依赖笔记、阅读记录、证明依赖图和问题状态；
 - 作为后续人工撰写证明解释的事实底稿，不直接复制为最终 Review。
+
+## 2026-07-30：全仓库状态回填与定稿产物复核
+
+### 使用内容
+
+- 检索全部 Markdown 中的“待定 / 待成员 / 待修订”状态，并依据 Day 5/6 后续文件逐项对账；
+- 将已解决项改为“已修订”或补充后续证据位置，同时保留 Day 2–4 的历史快照；
+- 生成 v1.0 HTML/PDF，并逐页检查 8 页的标题、页码、表格、边界和参考文献。
+
+### 人工核查边界
+
+- 未把阶段下标、字面常数 10 和位级峰值伪装为已独立证明，而是保留为 Q1/Q3；
+- 未代替成员完成口头演练、签字或 PR 审阅；小组最终决定不再为这些活动建立 Day 7 文件；
+- 本轮未提交或推送 Git 历史。
+
+### 项目最终状态
+
+源稿、引用审计、过程记录和最终 PDF 已定稿。Day 7 口头交流与最终审阅按小组决议不再留档；本日志不将其表述为已经发生。Q1/Q3 继续作为技术限制保留。

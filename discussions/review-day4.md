@@ -58,3 +58,11 @@
 1. `FinalizeStage` / `StartNewStage` 为抽象拆分，原文嵌在 Insert 维护中。  
 2. `HandleFailureOrRebuild` 非主定理 API。  
 3. 字面常数 10、阶段存储归纳仍为 Issue，正文不可写成已证。
+
+---
+
+## Day 5/6 最终回填
+
+- 概率求和、Theorem 1/10 条件、PSW 下界、空间代入和 failure 并合：**已修订**，见 A 章与整合稿 §5、§8.2、§9.2–§9.3。
+- 写入层就绪、迁移 failure 口径、小规模特判：**已修订**，见 B 章 §3–§7 与 `review-day4-C.md` 回填表。
+- 阶段下标形式归纳、字面常数 10、迁移位级峰值：**最终公开 Q1/Q3**，不作失效“待某人”处理。

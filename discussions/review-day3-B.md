@@ -17,7 +17,7 @@
 **位置。** `lemma-dependency-and-space.md` §2 表与对手模型 Q3。  
 **问题。** 表中 FP 依赖 pairwise，failure 依赖更高独立与 §5；一处合并叙述时易被读成同一概率空间事件。  
 **建议。** 保持分列，并在会议中口头强调：ε 是查询正确性条件下的误报；δ 是结构 failure。A 正文已大体分开，建议在依赖图表下加一行免责声明。  
-**处理结果。** 待 A 回应。
+**处理结果（Day 4/6 回填）。** 已修订。A 在 `probability-and-space-proof.md` §1–§3 及整合稿 §3、§9.3 将 FP `ε`、结构 failure `δ` 与无 FN 分开；`figures/proof-dependency.md` 同步保留阶段下标缺口。
 
 ## 意见 3（复核 Q1.5）
 

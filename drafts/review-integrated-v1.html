@@ -1,217 +1,43 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc 3.10" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Succinct Filters Review (v1)</title>
-  <style>
-    /* Default styles provided by pandoc.
-    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
-    */
-    html {
-      color: #1a1a1a;
-      background-color: #fdfdfd;
-    }
-    body {
-      margin: 0 auto;
-      max-width: 36em;
-      padding-left: 50px;
-      padding-right: 50px;
-      padding-top: 50px;
-      padding-bottom: 50px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      text-rendering: optimizeLegibility;
-      font-kerning: normal;
-    }
-    @media (max-width: 600px) {
-      body {
-        font-size: 0.9em;
-        padding: 12px;
-      }
-      h1 {
-        font-size: 1.8em;
-      }
-    }
-    @media print {
-      html {
-        background-color: white;
-      }
-      body {
-        background-color: transparent;
-        color: black;
-        font-size: 12pt;
-      }
-      p, h2, h3 {
-        orphans: 3;
-        widows: 3;
-      }
-      h2, h3, h4 {
-        page-break-after: avoid;
-      }
-    }
-    p {
-      margin: 1em 0;
-    }
-    a {
-      color: #1a1a1a;
-    }
-    a:visited {
-      color: #1a1a1a;
-    }
-    img {
-      max-width: 100%;
-    }
-    svg {
-      height: auto;
-      max-width: 100%;
-    }
-    h1, h2, h3, h4, h5, h6 {
-      margin-top: 1.4em;
-    }
-    h5, h6 {
-      font-size: 1em;
-      font-style: italic;
-    }
-    h6 {
-      font-weight: normal;
-    }
-    ol, ul {
-      padding-left: 1.7em;
-      margin-top: 1em;
-    }
-    li > ol, li > ul {
-      margin-top: 0;
-    }
-    blockquote {
-      margin: 1em 0 1em 1.7em;
-      padding-left: 1em;
-      border-left: 2px solid #e6e6e6;
-      color: #606060;
-    }
-    code {
-      white-space: pre-wrap;
-      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
-      font-size: 85%;
-      margin: 0;
-      hyphens: manual;
-    }
-    pre {
-      margin: 1em 0;
-      overflow: auto;
-    }
-    pre code {
-      padding: 0;
-      overflow: visible;
-      overflow-wrap: normal;
-    }
-    .sourceCode {
-     background-color: transparent;
-     overflow: visible;
-    }
-    hr {
-      border: none;
-      border-top: 1px solid #1a1a1a;
-      height: 1px;
-      margin: 1em 0;
-    }
-    table {
-      margin: 1em 0;
-      border-collapse: collapse;
-      width: 100%;
-      overflow-x: auto;
-      display: block;
-      font-variant-numeric: lining-nums tabular-nums;
-    }
-    table caption {
-      margin-bottom: 0.75em;
-    }
-    tbody {
-      margin-top: 0.5em;
-      border-top: 1px solid #1a1a1a;
-      border-bottom: 1px solid #1a1a1a;
-    }
-    th {
-      border-top: 1px solid #1a1a1a;
-      padding: 0.25em 0.5em 0.25em 0.5em;
-    }
-    td {
-      padding: 0.125em 0.5em 0.25em 0.5em;
-    }
-    header {
-      margin-bottom: 4em;
-      text-align: center;
-    }
-    #TOC li {
-      list-style: none;
-    }
-    #TOC ul {
-      padding-left: 1.3em;
-    }
-    #TOC > ul {
-      padding-left: 0;
-    }
-    #TOC a:not(:hover) {
-      text-decoration: none;
-    }
-    span.smallcaps{font-variant: small-caps;}
-    div.columns{display: flex; gap: 1.5em;}
-    div.column{flex: auto;}
-    @media screen {
-    div.columns{gap: min(4vw, 1.5em);}
-    div.column{overflow-x: auto;}
-    }
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    /* The extra [class] is a hack that increases specificity enough to
-       override a similar rule in reveal.js */
-    ul.task-list[class]{list-style: none;}
-    ul.task-list li input[type="checkbox"] {
-      font-size: inherit;
-      width: 0.8em;
-      margin: 0 0.8em 0.2em -1.6em;
-      vertical-align: middle;
-    }
-    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
-  </style>
-</head>
-<body>
-<header id="title-block-header">
-<h1 class="title">Succinct Filters Review (v1)</h1>
-</header>
-<h1
-id="succinct-filters-for-sets-of-unknown-sizes论文-review整合稿-v0.1">Succinct
-Filters for Sets of Unknown Sizes：论文 Review（整合稿 v0.1）</h1>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>Succinct Filters Review v1.0</title><style>
+body { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; max-width: 920px; margin: 36px auto; color: #202124; line-height: 1.62; font-size: 14px; }
+h1 { font-size: 26px; border-bottom: 2px solid #345; padding-bottom: 10px; }
+h2 { font-size: 20px; border-bottom: 1px solid #bbb; padding-bottom: 5px; break-after: avoid; }
+h3 { font-size: 16px; break-after: avoid; }
+table { border-collapse: collapse; width: 100%; font-size: 11px; }
+th, td { border: 1px solid #999; padding: 5px; vertical-align: top; }
+th { background: #eef2f5; }
+code { font-family: Consolas, monospace; background: #f4f4f4; padding: 1px 3px; }
+pre { white-space: pre-wrap; background: #f7f7f7; border-left: 3px solid #789; padding: 8px; break-inside: avoid; }
+blockquote { border-left: 4px solid #aaa; margin-left: 0; padding-left: 12px; color: #555; }
+a { color: #174ea6; text-decoration: none; }
+@media print {
+  body { max-width: none; margin: 0; font-size: 10.5pt; }
+  h1 { font-size: 20pt; }
+  h2 { font-size: 15pt; }
+  h3 { font-size: 12pt; }
+  table { font-size: 8pt; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  a { color: #000; }
+}
+</style></head><body><h1>Succinct Filters for Sets of Unknown Sizes：论文 Review（整合稿 v1.0）</h1>
 <ul>
-<li><strong>状态</strong>：Day 6
-第一版整合；<strong>非终稿</strong></li>
-<li><strong>整合说明</strong>：技术直觉 / 实现 /
-正确性与时间证明由张书铖（B）定稿并入；问题定义、主结果、下界、相关研究、评价等章在
-A/C 的 Day 5
-章节定稿前，仅保留<strong>可追溯的笔记级桥接</strong>，并标【待 A】【待
-C】。未关闭 Q1/Q3 在正文中显式保留。</li>
-<li><strong>贯穿教学示例</strong>：连续插入 8 个抽象元素
-<code>x1…x8</code>（§6.5）；不承担一般证明。</li>
+<li><strong>状态</strong>：Day 6 完整整合版；仍保留 Q1/Q3 公开核查项</li>
+<li><strong>整合说明</strong>：问题定义、主结果、PSW 下界与概率/空间核查由刘威（A）整合；技术直觉、实现、正确性与时间证明由张书铖（B）整合；相关研究、评价、局限与后续研究由陈戚（C）整合。</li>
+<li><strong>贯穿教学示例</strong>：连续插入 8 个抽象元素 <code>x1…x8</code>（§6.5）；不承担一般证明。</li>
 <li><strong>图示</strong>：<code>figures/architecture.md</code>、<code>figures/query-insert-flow.md</code>、<code>figures/growth-process.md</code>、<code>figures/proof-dependency.md</code></li>
 </ul>
-<hr />
-<h2 id="摘要">1. 摘要</h2>
-<p>【待 A 定稿】桥接要点：在集合最终规模未知时，维护动态 approximate
-membership（filter）与 dictionary；filter 空间在适当条件下达
-<code>(1+o(1))n(log(1/ε)+log log n)</code> 位，插入与查询在无 failure
-时为 worst-case <code>O(1)</code>（整段序列 failure 概率 ≤
-<code>δ</code>）。本 Review 解释问题为何难、相对 PSW
-的改进、构造与证明如何核查，并标明小组未关闭缺口。</p>
-<hr />
-<h2 id="引言">2. 引言</h2>
-<p>【待 A 定稿】桥接要点：membership 应用广泛；dictionary 精确、filter
-允许误报但不允许漏报；传统结构常按容量上界 <code>N</code> 占空间；当
-<code>n≪N</code> 或 <code>N</code>
-不可靠时浪费严重。核心问题：空间能否始终依赖当前规模，同时保持误报、无漏报与最坏情况常数时间？</p>
+<hr>
+<h2>1. 摘要</h2>
+<p>本文研究最终集合规模或紧容量上界事先未知时的动态 approximate membership。其难点在于，filter 为了节省空间已经丢弃了枚举原 key 所需的信息，因而不能像 exact dictionary 那样直接重建扩容。Liu–Yin–Yu 通过变长哈希前缀、prefix matching、短串 truth table、长串 succinct 结构和两代去均摊迁移，在 <code>n=ω(log u)</code>、<code>n&lt;u</code> 时使用 <code>n(log(1/ε)+log log n+O(log log log u))+u^c</code> 位，并在 no-failure 执行中给出插入和查询的 worst-case <code>O(1)</code>。对任意插入序列，整个过程曾报告 failure 的概率至多为 <code>δ=u^{-C}</code>；无 failure 时无漏报，非成员误报率至多为 <code>ε</code>。本 Review 详细解释这一结果与 PSW 信息论下界的关系，重建其实现、正确性、误报、failure、时间和空间论证的依赖链，并公开保留阶段下标、字面常数 10 和位级迁移峰值等 Q1/Q3 核查项。</p>
+<hr>
+<h2>2. 引言</h2>
+<p>成员查询出现在缓存、存储、网络和数据库等诸多系统中。Exact dictionary 保留足够的 key 信息以回答精确查询；filter 允许将少量非成员错认为成员，但对已插入元素不允许漏报，因而能用更少比特完成预过滤。</p>
+<p>当容量上界 <code>N</code> 已知时，结构可以在初始化时为 <code>N</code> 个 key 配置空间。但在一个持续增长的系统中，紧的最终上界常常无法事先得到：高估 <code>N</code> 会在 <code>n≪N</code> 时浪费空间，低估又会触发扩容。对 dictionary，扩容可通过枚举原 key 重建；对 filter，内部状态未必足以恢复原 key，因而这个看似平常的操作成为理论难点。</p>
+<p>论文的核心问题是：能否在没有紧最终容量上界时，让空间始终依赖当前规模 <code>n</code>，同时保持无漏报、误报率至多 <code>ε</code>，并把插入和查询都做到高概率意义下的最坏常数时间？PSW 已证明 unknown-size 设定必须支付额外 <code>n log log n</code> 信息，并给出接近下界的构造；LYY 的任务是在收紧该项领先常数的同时，解决去均摊扩容和位级 succinctness 之间的冲突。</p>
 <p>下文先给出问题与结果（A），再述相关工作（C），然后展开构造与证明（B），最后评价与后续（C）。</p>
-<hr />
-<h2 id="问题定义和研究意义">3. 问题定义和研究意义</h2>
-<p>【待 A 整合 <code>definitions.md</code> / Day 5 问题章】</p>
+<hr>
+<h2>3. 问题定义和研究意义</h2>
 <p><strong>全局符号（全文统一；<code>log</code> 以 2 为底）</strong></p>
 <table>
 <thead>
@@ -220,15 +46,17 @@ membership（filter）与 dictionary；filter 空间在适当条件下达
 <th>含义</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td><code>[u]</code></td>
 <td>全集 <code>{0,…,u−1}</code></td>
 </tr>
 <tr>
+<td><code>S</code></td>
+<td>当前逻辑集合 <code>S⊆[u]</code></td>
+</tr>
+<tr>
 <td><code>n</code></td>
-<td>插入次数（insertion-sequence）；与去重后 <code>|S|</code> 的差别见
-A</td>
+<td>当前插入规模；本文默认互异 key 序列</td>
 </tr>
 <tr>
 <td><code>ε</code></td>
@@ -242,57 +70,83 @@ A</td>
 <td><code>N</code></td>
 <td>传统预置容量上界（本文希望摆脱对紧 <code>N</code> 的依赖）</td>
 </tr>
-</tbody>
-</table>
-<p><strong>口径</strong>：正确性与时间保证均 <strong>conditioned on no
-failure</strong>；<code>ε</code> 与 <code>δ</code> 不可混用。</p>
-<hr />
-<h2 id="相关研究">4. 相关研究</h2>
-<p>【待 C 整合】读者测试意见见
-<code>discussions/review-day6.md</code>（B
-测相关工作笔记）。分层提醒：Bloom / scalable·dynamic Bloom / succinct
-dictionary / quotient·cuckoo / PSW / 2020
-后工作不可排成单一“更优”序列。</p>
-<hr />
-<h2 id="论文主要结果">5. 论文主要结果</h2>
-<p>【待 A 定稿】与构造对照时采用：</p>
+<tr>
+<td><code>w</code></td>
+<td>word-RAM 字长，Theorem 10 中 <code>w=Θ(log u)</code></td>
+</tr>
+<tr>
+<td><code>c,C</code></td>
+<td>预计算空间和 failure 指数的常数，<code>0&lt;c&lt;1</code>、<code>C&gt;1</code></td>
+</tr>
+</tbody></table>
+<p><code>insert(x)</code> 将 key 加入 <code>S</code>；<code>lookup(x)</code> 回答成员性。Dictionary 不允许误报或漏报；filter 对 <code>x∈S</code> 必须回答 YES，对 <code>x∉S</code> 允许以至多 <code>ε</code> 的概率回答 YES。“Unknown size”指初始化时不知道最终规模或紧的 <code>N</code>，不是 <code>u</code> 未知，也不是结构不知道当前 <code>n</code>。</p>
+<p>已知容量 filter 的主信息论成本为 <code>N log(1/ε)</code> 位。Unknown-size 模型要求每个中间时刻的空间都跟随当前 <code>n</code>，PSW 下界证明除误报信息外还需支付近似 <code>n log log n</code> 的额外信息。这使 LYY 的目标不是单纯“会扩容”，而是在这一不可避免的空间尺度上进一步实现 worst-case <code>O(1)</code> 操作。</p>
+<p><strong>概率口径</strong>：<code>ε</code> 是 no-failure 条件下的非成员误报率；<code>δ</code> 是任意插入序列上“整个过程曾报告 failure”的序列级事件上界。无漏报和操作时间的对外说明均保留 no-failure 条件。</p>
+<hr>
+<h2>4. 相关研究</h2>
+<p>比较相关工作之前，先固定本文的目标组合：事前没有紧的最终容量上界；空间随当前插入规模变化；无漏报、误报率至多 <code>ε</code>；无 failure 时插入和查询为 worst-case <code>O(1)</code>。因此“动态”“可扩容”和“支持删除”必须拆成空间参数、查询路径、更新时间、删除、工程实现和概率口径分别比较。</p>
+<h3>4.1 从 Bloom filter 到多组件扩展</h3>
+<p>Bloom filter 是 approximate membership 的历史起点 [bloom1970space]；Carter 等人给出更一般的问题与下界基础 [carter1978membership]。经典 Bloom filter 通常根据目标容量设定位数组和哈希参数；持续超额插入会使误报偏离原目标。</p>
+<p>Scalable Bloom Filter（SBF）在组件达到阈值后追加更大组件，并按几何级数收紧各组件误报预算；查询要逐个测试已有组件 [almeida2007scalable, §4–§5]。Dynamic Bloom Filter（DBF）也追加组件，其论文给出的平均查询复杂度与组件数相关，误报表达式随组件数增长 [guo2006dynamic, §III]：</p>
+<pre><code class="language-text">query ──► Filter_0 ──► Filter_1 ──► … ──► Filter_s
+</code></pre>
+<p>它们说明未知最终规模可以用工程化组件增长处理，但没有自动获得本文“位级当前规模空间 + 固定常数个查询结构 + 可比最坏时间”的组合保证。本文也不能据此被概括为“全面优于 Bloom”。</p>
+<h3>4.2 Succinct dictionary 与去均摊背景</h3>
+<p>Exact dictionary 的稀疏信息论基准接近 <code>log binom(u,n)≈n log(u/n)+O(n)</code>；filter 的主基准是 <code>n log(1/ε)</code>。编码对象不同，不能直接比较两个对数项的大小。Raman–Rao、Demaine 等工作提供 succinct dynamic dictionary 背景 [raman2003succinct; demaine2006dictionariis]；去均摊 cuckoo hashing 则说明如何把重建拆到多次更新 [arbitman2010backyard]。LYY 的困难在于同时满足 bit-level succinctness 和 worst-case 去均摊，而不是把任一背景结构原样套用。</p>
+<p>Quotient filter 与 Cuckoo filter 是原文未引用、由本 Review 外补的工程对照。前者支持删除、合并和 resize，但依赖槽数、负载率与 cluster 长度 [bender2012quotient, §3–§4]；后者查询两个桶并支持删除，但插入可能 relocation 或失败，保证依赖桶数、桶容量、负载和 fingerprint 长度 [fan2014cuckoo, §4–§5]。删除、局部性和吞吐是有意义的额外维度，却不等于已经证明本文的 unknown-size 空间式。</p>
+<h3>4.3 直接前作：PSW 2013</h3>
+<p>Pagh–Segev–Wieder（PSW）直接研究最终规模未知、空间在各中间规模受约束的 approximate membership [pagh2013unknown]。其 Theorem 3.1 的编码下界说明，除 <code>n log(1/ε)</code> 外还要支付约 <code>n log log n</code> 的额外信息；下界不依赖操作时间。PSW 的上界插入为 expected amortized <code>O(1)</code>（按 LYY 转述），且 <code>log log n</code> 上界项没有钉死领先常数。</p>
+<p>LYY 的推进是组合性的：在相应条件下收紧 <code>log log n</code> 领先项，并在 no-failure 执行中同时给插入、查询 worst-case <code>O(1)</code> [liu2020succinct]。可靠说法是“在 insertion-only unknown-size 模型中收紧空间与时间语义”，而不是“首次提出 unknown-size”或无条件“达到全部信息论最优”。</p>
+<h3>4.4 2020 年后的三类进展</h3>
 <ul>
-<li><strong>正式 Theorem
-10</strong>：<code>n=ω(log u)</code>、<code>n&lt;u</code>；主体空间
-<code>n(log(1/ε)+log log n+O(log log log u))</code> + 输入无关
-<code>u^c</code>；无 failure 时 FP≤<code>ε</code>、操作
-O(1)；failure≤<code>δ</code>。</li>
-<li><strong>非正式 Theorem 1</strong>：<code>n&gt;u^{0.001}</code>
-等条件下写成 <code>(1+o(1))…</code>；<strong>不得</strong>把该条件写成
-Thm 10 的唯一前提。</li>
-<li><strong>相对 PSW</strong>：在 <code>ε=o(1)</code> 等条件下钉死
-<code>log log n</code> 领先常数，并给出 whp 最坏 O(1)
-而非期望均摊插入（评价措辞见 C；最优性依赖 PSW 下界）。</li>
+<li>**Aleph Filter（2024）**直接引用并比较 LYY，强调可运行的无限增长、删除和内存—误报率权衡 [dayan2024aleph, §7]。但其部分 void duplicate 清理按生命周期 amortized 分析（§5.2），不能直接等同于 LYY 的 no-failure worst-case 口径。</li>
+<li>**Kuszmaul–Walzer（2024）**研究支持插入、删除且有容量约束的 fully dynamic filter，证明删除模型需要线性额外空间；Theorem 3.1 在相应区间给出 <code>&gt;0.35n-o(n)</code> 的额外项 [kuszmaul2024dynamicfilters]。它说明删除改变信息论约束，不是对 LYY 正确性的否定。</li>
+<li>**Resizable Retrieval（2026 预印本）**把空间按当前集合大小 <code>n</code> 计，并导出支持插入/删除的 filter 推论。Corollary 3.14 的空间为 <code>n log(1/ε)+O(n log log(U/n))+polylog U+O(U^δ)</code>，操作为相对当前 <code>n</code> 的 constant time with high probability [kuszmaul2026resizable]。它直接承接 PSW/LYY，但参数和概率口径不同；截至 2026-07-28 仍只按 arXiv/CoRR 预印本引用。</li>
 </ul>
-<hr />
-<h2 id="核心技术直觉">6. 核心技术直觉</h2>
-<h3 id="总路线">6.1 总路线</h3>
-<p>在最终规模未知时，构造目标是：空间跟随当前
-<code>n</code>，无漏报，误报 ≤ <code>ε</code>，且在无 failure
-时插入/查询为 worst-case <code>O(1)</code>。</p>
+<p>InfiniFilter 目前为 E2；Li 等人 2023/2024 的 exact dynamic dictionary 工作为 E1。它们保留在研究矩阵展示检索过程，不进入本稿的确定性跨论文结论。完整时间线和证据等级见 <code>drafts/section-C-related-work-and-evaluation.md</code> 与 <code>references/citation-audit.md</code>。</p>
+<hr>
+<h2>5. 论文主要结果</h2>
+<h3>5.1 定理层次</h3>
+<table>
+<thead>
+<tr>
+<th>结果</th>
+<th>参数与空间</th>
+<th>时间、误报与 failure</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>正式 Theorem 10</td>
+<td><code>n=ω(log u)</code>、<code>n&lt;u</code>；<code>n(log(1/ε)+log log n+O(log log log u))+u^c</code> 位</td>
+<td>每次插入/查询 worst-case <code>O(1)</code>；序列级 failure 至多 <code>δ=u^{-C}</code>；no-failure 时 FP<code>≤ε</code>、无 FN</td>
+</tr>
+<tr>
+<td>非正式 Theorem 1</td>
+<td><code>n&gt;u^{0.001}</code> 时化简为 <code>(1+o(1))n(log(1/ε)+log log n)</code></td>
+<td>最坏常数时间 with high probability</td>
+</tr>
+</tbody></table>
+<p>Theorem 1 的 <code>n&gt;u^{0.001}</code> 是用来将 <code>O(log log log u)</code> 和 <code>u^c</code> 吸收进 <code>(1+o(1))</code> 的更强展示条件，不是 Theorem 10 的字面范围。</p>
+<h3>5.2 PSW 下界与领先项</h3>
+<p>PSW Theorem 3.1 在一个规模区间内对每元素位数 <code>β</code> 给出参数化下界。证明先固定数据结构的随机性，再用几何块分解插入序列；在若干中间时刻中找到一个正回答集合增长很小的块，并用 Chernoff 界控制该块中预先误报的元素数；然后把数据结构的中间状态当作编码的一部分，利用块前后正回答集合压缩该块。如果所有中间状态都太小，就能把至少 <code>u^n/3</code> 条序列编码得比 <code>n log u-O(1)</code> 的计数下界更短，导出矛盾。</p>
+<p>PSW Theorem 1.1 字面得到 <code>(1-o(1))n log(1/ε)+Ω(n log log n)</code>；更细的 <code>(1-O(ε))</code> 领先系数来自 Theorem 3.1 的参数选择。因此 LYY 式 (2) 只解释本构造为何出现 <code>log log n</code>，PSW 编码论证才说明它对 unknown-size 结构普遍不可避免。当 <code>ε=o(1)</code> 时，LYY 上界与 PSW 参数化下界的 <code>log log n</code> 领先项对齐；对固定 <code>ε</code>，不将 <code>(1-O(ε))</code> 扩张为严格系数 1。</p>
+<hr>
+<h2>6. 核心技术直觉</h2>
+<h3>6.1 总路线</h3>
+<p>在最终规模未知时，构造目标是：空间跟随当前 <code>n</code>，无漏报，误报 ≤ <code>ε</code>，且在无 failure 时插入/查询为 worst-case <code>O(1)</code>。</p>
 <p>总路线：</p>
-<ol type="1">
-<li>全局哈希 <code>h</code> 把 key
-映成长比特串，<strong>不保存</strong>原始 key。</li>
-<li>第 <code>n</code> 次插入只写入 <code>h(x)</code> 的前
-<code>ℓ_{i★(n)}</code> 位，其中 <code>i★(n)=⌈log n⌉</code>。</li>
-<li>查询化为 prefix matching：是否存在已存串 <code>s</code> 为
-<code>h(y)</code> 的前缀。</li>
-<li>短前缀用真值表 <code>T</code>，长前缀用已知容量结构
-<code>D(m,ℓ)</code>；未知规模由「两代 <code>D/T</code> 并存 +
-后台迁移」拼装（Claim 13 → Lemma 11 → Theorem 10）。</li>
+<ol>
+<li>全局哈希 <code>h</code> 把 key 映成长比特串，<strong>不保存</strong>原始 key。</li>
+<li>第 <code>n</code> 次插入只写入 <code>h(x)</code> 的前 <code>ℓ_{i★(n)}</code> 位，其中 <code>i★(n)=⌈log n⌉</code>。</li>
+<li>查询化为 prefix matching：是否存在已存串 <code>s</code> 为 <code>h(y)</code> 的前缀。</li>
+<li>短前缀用真值表 <code>T</code>，长前缀用已知容量结构 <code>D(m,ℓ)</code>；未知规模由「两代 <code>D/T</code> 并存 + 后台迁移」拼装（Claim 13 → Lemma 11 → Theorem 10）。</li>
 </ol>
-<p>相对 PSW：真值表处理短串；去均摊、可查询的迁移；更紧底层冗余以支撑
-<code>log log n</code> 项领先常数（条件见 A）。</p>
+<p>相对 PSW：真值表处理短串；去均摊、可查询的迁移；更紧底层冗余以支撑 <code>log log n</code> 项领先常数（条件见 A）。</p>
 <p>体系结构见 <code>figures/architecture.md</code>。</p>
-<h3 id="变长前缀与误报预算">6.2 变长前缀与误报预算</h3>
+<h3>6.2 变长前缀与误报预算</h3>
 <p><strong>论文命题</strong>（§3.1 式 (2)）：</p>
-<pre class="text"><code>ℓ_i = i + log(1/ε) + log i + log log log u + 2</code></pre>
+<pre><code class="language-text">ℓ_i = i + log(1/ε) + log i + log log log u + 2
+</code></pre>
 <table>
 <thead>
 <tr>
@@ -300,8 +154,7 @@ Thm 10 的唯一前提。</li>
 <th>作用</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td><code>i</code></td>
 <td>随阶段增长加长前缀</td>
 </tr>
@@ -317,13 +170,9 @@ Thm 10 的唯一前提。</li>
 <td><code>log log log u</code>、<code>+2</code></td>
 <td>冗余与并合余量</td>
 </tr>
-</tbody>
-</table>
-<p>非成员误报经阶段内前缀数与 <code>2^{−ℓ_i}</code> 的 union bound
-受控（<strong>精算见
-A</strong>）。迁移只改存放位置，<strong>不改变</strong>该前缀写入时所按的
-<code>ℓ_i</code> 预算。</p>
-<h3 id="四个活跃结构">6.3 四个活跃结构</h3>
+</tbody></table>
+<p>非成员误报经阶段内前缀数与 <code>2^{−ℓ_i}</code> 的 union bound 受控（<strong>精算见 A</strong>）。迁移只改存放位置，<strong>不改变</strong>该前缀写入时所按的 <code>ℓ_i</code> 预算。</p>
+<h3>6.3 四个活跃结构</h3>
 <p>操作参数 <code>i=i★(n)</code>：</p>
 <table>
 <thead>
@@ -332,8 +181,7 @@ A</strong>）。迁移只改存放位置，<strong>不改变</strong>该前缀�
 <th>职责</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td><code>D_i</code></td>
 <td>当前长前缀主写入</td>
 </tr>
@@ -349,25 +197,14 @@ A</strong>）。迁移只改存放位置，<strong>不改变</strong>该前缀�
 <td><code>T_{i−1}</code></td>
 <td>更短层；迁出时扩展为 <code>y∘0,y∘1</code></td>
 </tr>
-</tbody>
-</table>
-<p>「已初始化」的下一层可能存在，但 <strong>Lookup
-不查询它们</strong>。</p>
-<p><strong>开放缺口（Q1/Q3）</strong>：Claim 13 证明段半开区间句与
-<code>i★</code> 下标冲突未形式关闭；正文操作一律跟算法句
-<code>i★</code>。见
-<code>discussions/issues/issue-stage-index.md</code>。</p>
-<p><strong>小边界</strong>：<code>n=1</code> 时无
-<code>D_{−1}/T_{−1}</code>；式 (2) 并合自
-<code>i≥1</code>，<code>ℓ_0</code> 特判待与 A 统一。</p>
-<h3 id="为何不是可扩容-bloom">6.4 为何不是“可扩容 Bloom”</h3>
-<p>工程 scalable/dynamic Bloom
-可增长，但通常查询多个组件、空间/时间保证与本文 word-RAM
-定理不同（C）。本文要同时：空间相对当前 <code>n</code> 的 succinct
-主项、只查常数结构、whp 最坏 O(1)。</p>
-<h3 id="贯穿教学示例唯一">6.5 贯穿教学示例（唯一）</h3>
-<p>连续插入
-<code>x1…x8</code>（人为示意前缀，<strong>非</strong>真实哈希，<strong>不</strong>证明概率/空间）：</p>
+</tbody></table>
+<p>「已初始化」的下一层可能存在，但 <strong>Lookup 不查询它们</strong>。</p>
+<p><strong>开放缺口（Q1/Q3）</strong>：Claim 13 证明段半开区间句与 <code>i★</code> 下标冲突未形式关闭；正文操作一律跟算法句 <code>i★</code>。见 <code>discussions/issues/issue-stage-index.md</code>。</p>
+<p><strong>小边界</strong>：<code>n=1</code> 时无 <code>D_{−1}/T_{−1}</code>；式 (2) 并合自 <code>i≥1</code>，<code>ℓ_0</code> 特判待与 A 统一。</p>
+<h3>6.4 为何不是“可扩容 Bloom”</h3>
+<p>工程 scalable/dynamic Bloom 可增长，但通常查询多个组件、空间/时间保证与本文 word-RAM 定理不同（C）。本文要同时：空间相对当前 <code>n</code> 的 succinct 主项、只查常数结构、whp 最坏 O(1)。</p>
+<h3>6.5 贯穿教学示例（唯一）</h3>
+<p>连续插入 <code>x1…x8</code>（人为示意前缀，<strong>非</strong>真实哈希，<strong>不</strong>证明概率/空间）：</p>
 <table>
 <thead>
 <tr>
@@ -378,8 +215,7 @@ A</strong>）。迁移只改存放位置，<strong>不改变</strong>该前缀�
 <th>维护推进</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>1</td>
 <td>0</td>
 <td><code>D0</code></td>
@@ -407,81 +243,39 @@ A</strong>）。迁移只改存放位置，<strong>不改变</strong>该前缀�
 <td><code>D2,D3,T2,T3</code></td>
 <td>迁 <code>T2/D2</code>；init <code>T4/D4</code></td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>同步图：<code>figures/growth-process.md</code>。</p>
-<hr />
-<h2 id="数据结构详细实现">7. 数据结构详细实现</h2>
-<h3 id="算法说明抽象非工程代码">7.1 算法说明（抽象；非工程代码）</h3>
-<p>状态：<code>n</code>，<code>h</code>，<code>failed</code>，各层
-<code>T[j],D[j]</code>，init/destroy 进度。<br />
-<code>i★(n)=⌈log n⌉</code>，<code>ℓ_i</code> 如式
-(2)，<code>Pref(z,L)</code> 为前 <code>L</code> 比特。</p>
-<p><strong>Lookup(y)</strong>（<code>¬failed</code>，<code>n≥1</code>）：<code>i←i★(n)</code>，<code>z←h(y)</code>；若
-<code>D_{i−1}</code>/<code>D_i</code>/<code>T_{i−1}</code>/<code>T_i</code>
-任一对相应前缀查询命中则 YES，否则 NO。至多四次底层 query。</p>
-<p><strong>Insert(x)</strong>：<code>n←n+1</code>，<code>i←i★(n)</code>，<code>s←Pref(h(x),ℓ_i)</code>；若无更短前缀覆盖则
-<code>D.insert(D_i,s)</code>（失败则 <code>failed←true</code>）；再执行
-<strong>10</strong> 次维护步（原文）。</p>
+<hr>
+<h2>7. 数据结构详细实现</h2>
+<h3>7.1 算法说明（抽象；非工程代码）</h3>
+<p>状态：<code>n</code>，<code>h</code>，<code>failed</code>，各层 <code>T[j],D[j]</code>，init/destroy 进度。<br><code>i★(n)=⌈log n⌉</code>，<code>ℓ_i</code> 如式 (2)，<code>Pref(z,L)</code> 为前 <code>L</code> 比特。</p>
+<p><strong>Lookup(y)</strong>（<code>¬failed</code>，<code>n≥1</code>）：<code>i←i★(n)</code>，<code>z←h(y)</code>；若 <code>D_{i−1}</code>/<code>D_i</code>/<code>T_{i−1}</code>/<code>T_i</code> 任一对相应前缀查询命中则 YES，否则 NO。至多四次底层 query。</p>
+<p><strong>Insert(x)</strong>：<code>n←n+1</code>，<code>i←i★(n)</code>，<code>s←Pref(h(x),ℓ_i)</code>；若无更短前缀覆盖则 <code>D.insert(D_i,s)</code>（失败则 <code>failed←true</code>）；再执行 <strong>10</strong> 次维护步（原文）。</p>
 <p><strong>一轮维护（MigrateOneStep(i)）</strong>，对应 Claim 13：</p>
-<ol type="1">
-<li>若 <code>T_{i−1}</code> 非空：<code>decrement</code> 得
-<code>y</code>，则写入 <code>T_i</code> 的 <code>y∘0</code> 与
-<code>y∘1</code>；<br />
-</li>
-<li>若 <code>D_{i−1}</code> 非空：<code>decrement</code> 得
-<code>y</code>，则 <code>|y|&gt;i</code> 进 <code>D_i</code>，否则进
-<code>T_i</code>；<br />
-</li>
-<li>旧层已空则推进 <code>destroy</code>；<br />
-</li>
-<li>旧层已销毁则推进
-<code>initialize(T_{i+1}), initialize(D_{i+1})</code>。</li>
+<ol>
+<li>若 <code>T_{i−1}</code> 非空：<code>decrement</code> 得 <code>y</code>，则写入 <code>T_i</code> 的 <code>y∘0</code> 与 <code>y∘1</code>；  </li>
+<li>若 <code>D_{i−1}</code> 非空：<code>decrement</code> 得 <code>y</code>，则 <code>|y|&gt;i</code> 进 <code>D_i</code>，否则进 <code>T_i</code>；  </li>
+<li>旧层已空则推进 <code>destroy</code>；  </li>
+<li>旧层已销毁则推进 <code>initialize(T_{i+1}), initialize(D_{i+1})</code>。</li>
 </ol>
-<p>完整状态机见 <code>notes/memberB/pseudocode.md</code>。<br />
-<strong>字面常数 10</strong>：原文每次执行 10 轮；<strong>小组未从黑盒
-<code>O(m)</code>
-隐藏常数独立复算其充分性</strong>（Q3）。渐近上存在足够大的常数轮数。<br />
-<strong>写入层就绪</strong>：单次 Insert <strong>不得</strong> while
-到初始化完成；依赖阶段就绪不变式 + 每插常数轮推进。</p>
-<h3 id="底层-dmℓ">7.2 底层 <code>D(m,ℓ)</code></h3>
-<p>黑盒：<code>initialize</code>/<code>destroy</code>（各 O(m)
-次调用完成）、<code>insert</code>、<code>query</code>（是否存在前缀）、<code>decrement</code>。空间约
-<code>q(ℓ−log m+2 log log log u)+O(m)</code>。写入 <code>D_i</code>
-的串来自 core set，以匹配随机性假设。</p>
-<p>§5 内部：main table → subtable → adaptive prefixes / navigator → data
-blocks（动态插入 + 后台重组静态）。位级冗余与式 (3)(4)(5) 精算以 A
-为准；未闭合细节为 Q2/Q3。</p>
+<p>完整状态机见 <code>notes/memberB/pseudocode.md</code>。<br><strong>字面常数 10</strong>：原文每次执行 10 轮；<strong>小组未从黑盒 <code>O(m)</code> 隐藏常数独立复算其充分性</strong>（Q3）。渐近上存在足够大的常数轮数。<br><strong>写入层就绪</strong>：单次 Insert <strong>不得</strong> while 到初始化完成；依赖阶段就绪不变式 + 每插常数轮推进。</p>
+<h3>7.2 底层 <code>D(m,ℓ)</code></h3>
+<p>黑盒：<code>initialize</code>/<code>destroy</code>（各 O(m) 次调用完成）、<code>insert</code>、<code>query</code>（是否存在前缀）、<code>decrement</code>。空间约 <code>q(ℓ−log m+2 log log log u)+O(m)</code>。写入 <code>D_i</code> 的串来自 core set，以匹配随机性假设。</p>
+<p>§5 内部：main table → subtable → adaptive prefixes / navigator → data blocks（动态插入 + 后台重组静态）。位级冗余与式 (3)(4)(5) 精算以 A 为准；未闭合细节为 Q2/Q3。</p>
 <p>操作流图：<code>figures/query-insert-flow.md</code>。</p>
-<hr />
-<h2 id="正确性证明">8. 正确性证明</h2>
+<hr>
+<h2>8. 正确性证明</h2>
 <p>对应 <code>notes/proof-table.md</code>。</p>
-<h3 id="无-false-negative">8.1 无 false negative</h3>
-<p><strong>命题</strong>：无 failure 时，已插入 key 的 Lookup 为
-YES。<br />
-<strong>论证（控制流，已核实）</strong>：写入前缀或被更短前缀覆盖；迁移边取边写、不丢串；Lookup
-同时查旧层与新层。<br />
-<strong>缺口</strong>：对所有 <code>n</code>
-的形式存储归纳受阶段下标冲突阻塞（issue-stage-index）——<strong>不写成已完全证明</strong>。</p>
-<h3 id="误报率-ε">8.2 误报率 ≤ <code>ε</code></h3>
-<p><strong>命题</strong>：无 failure 时，非成员误报概率 ≤
-<code>ε</code>。<br />
-<strong>骨架</strong>：式 (2) + 阶段/键 union bound（<strong>A
-精算</strong>）；迁移不重复计费。依赖图：<code>figures/proof-dependency.md</code>。</p>
-<h3 id="prefix-matching-与四结构覆盖">8.3 Prefix matching
-与四结构覆盖</h3>
-<p>短串 <code>T</code>、长串
-<code>D</code>；查询固定四个活跃结构，避免扫 <code>Θ(log n)</code>
-层历史 filter。</p>
-<hr />
-<h2 id="时间和空间复杂度证明">9. 时间和空间复杂度证明</h2>
-<h3 id="时间b">9.1 时间（B）</h3>
+<h3>8.1 无 false negative</h3>
+<p><strong>命题</strong>：无 failure 时，已插入 key 的 Lookup 为 YES。<br><strong>论证（控制流，已核实）</strong>：写入前缀或被更短前缀覆盖；迁移边取边写、不丢串；Lookup 同时查旧层与新层。<br><strong>缺口</strong>：对所有 <code>n</code> 的形式存储归纳受阶段下标冲突阻塞（issue-stage-index）——<strong>不写成已完全证明</strong>。</p>
+<h3>8.2 误报率 ≤ <code>ε</code></h3>
+<p><strong>命题</strong>：无 failure 时，非成员误报概率 ≤ <code>ε</code>。<br><strong>骨架</strong>：式 (2) + 阶段/键 union bound（<strong>A 精算</strong>）；迁移不重复计费。依赖图：<code>figures/proof-dependency.md</code>。</p>
+<h3>8.3 Prefix matching 与四结构覆盖</h3>
+<p>短串 <code>T</code>、长串 <code>D</code>；查询固定四个活跃结构，避免扫 <code>Θ(log n)</code> 层历史 filter。</p>
+<hr>
+<h2>9. 时间和空间复杂度证明</h2>
+<h3>9.1 时间（B）</h3>
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
 <thead>
 <tr>
 <th>操作</th>
@@ -489,8 +283,7 @@ YES。<br />
 <th>条件</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>Lookup</td>
 <td>≤4 次底层 query + <code>h</code> 求值</td>
 <td><code>¬failed</code>；底层 O(1)</td>
@@ -500,62 +293,117 @@ YES。<br />
 <td>1×<code>D.insert</code> + 10×维护轮；每轮常数次底层调用</td>
 <td>同上；字面 10 为原文/Q3</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>§5 块重组同样去均摊到每次插入的常数步。</p>
-<h3 id="空间a-主核b-结构约束">9.2 空间（A 主核；B 结构约束）</h3>
-<p>Lemma 11 代入 <code>ℓ_{⌈log n⌉}</code> 得主体
-<code>n(log(1/ε)+log log n+O(log log log u))+u^c</code>。<br />
-B 确认：同时仅常数层 <code>D/T</code> 全量活跃，不保留
-<code>log n</code> 个独立全量 filter。位级迁移峰值仍为 Q3。</p>
-<h3 id="failure-δa">9.3 Failure ≤ <code>δ</code>（A）</h3>
-<p>每层 <code>D_i</code> 经式 (3)(4)(5) 等到 <code>u^{−2C}</code>，对
-≤<code>log u</code> 层并合到 <code>u^{−C}</code>。B
-抽查骨架同意；自适应对手不作无条件扩张。</p>
-<hr />
-<h2 id="技术优越性">10. 技术优越性</h2>
-<p>【待 C；证据 S1–S4 见
-<code>evaluation-evidence.md</code>】组合保证：unknown-size 空间主项 +
-无 FN + FP≤<code>ε</code> + whp 最坏 O(1)。相对
-PSW：领先常数与时间语义。非“全面优于 Bloom”。</p>
-<hr />
-<h2 id="局限性与适用范围">11. 局限性与适用范围</h2>
-<p>【待 C】至少须保留：无用户删除；保证 conditioned on no
-failure；<code>u^c</code> 与 <code>n=ω(log u)</code>；实现远复杂于工程
-Bloom；字面 10
-与阶段下标为小组核查缺口（L4）；删除模型有不同下界，不能反推本文错误。</p>
-<hr />
-<h2 id="后续研究">12. 后续研究</h2>
-<p>【待 C】区分 insertion-only unknown-size、fully
-dynamic（含删除）、resizable-current-<code>n</code>；E1/E2
-不得作确定结论；2026 预印本标明状态。</p>
-<hr />
-<h2 id="小组评价">13. 小组评价</h2>
-<p>【三人共同 · 待会后补】事实：论文在所述模型下给出同时达成空间主项与
-whp 最坏常数时间的构造。观点：讲解主线宜强调四结构 + 去均摊迁移；Review
-必须公开 Q1/Q3。</p>
-<hr />
-<h2 id="结论">14. 结论</h2>
-<p>本文不是简单的“可扩容 Bloom”，而是 unknown-size
-设定下，用哈希前缀、prefix matching、短串真值表、长串 succinct
-结构与分阶段去均摊迁移，逼近信息论额外 <code>log log n</code>
-成本并追求最坏情况常数时间。读者应同时看到定理条件、与
-PSW/工程方案的模型差异，以及本文整合稿中仍开放的下标与常数配平缺口。</p>
-<hr />
-<h2 id="参考文献">15. 参考文献</h2>
-<p>【待 C 统一 BibTeX】正文已用关键文献：Liu–Yin–Yu ICALP 2020 /
-arXiv:2004.12465；Pagh–Segev–Wieder FOCS 2013（仓库
-<code>1304.1188v2.pdf</code>）。引用审计见
-<code>references/citation-audit.md</code>（C 主责；B
-抽查技术章引用）。</p>
-<hr />
-<h2 id="附录-a.-开放问题带入-day-7">附录 A. 开放问题（带入 Day 7）</h2>
+<h3>9.2 空间（A 主核；B 结构约束）</h3>
+<p>Lemma 11 在 <code>n</code> 次插入后使用</p>
+<pre><code class="language-text">n(ℓ_{⌈log n⌉}-log n+O(log log log u))+u^c
+</code></pre>
+<p>位。代入式 (2)，并使用 <code>⌈log n⌉-log n=O(1)</code>、<code>log⌈log n⌉=log log n+O(1)</code>，可得</p>
+<pre><code class="language-text">n(log(1/ε)+log log n+O(log log log u))+u^c.
+</code></pre>
+<p>其中 <code>u^c</code> 是与输入无关的全局哈希/查表预计算空间，不得从正式定理中省略。在 Theorem 1 的 <code>n&gt;u^{0.001}</code> 展示条件下，选择 <code>c&lt;0.001</code> 得 <code>u^c=o(n)</code>，且 <code>log log log u=o(log log n)</code>，因而可化简为 <code>(1+o(1))n(log(1/ε)+log log n)</code>。</p>
+<p>B 的结构核查确认，同时只有相邻两代 <code>D/T</code> 承担已插入前缀，而不保留 <code>Θ(log n)</code> 个独立全量 filter。但四次查询本身不能证明位级峰值；初始化下一层、销毁上一层和迁移临时态的领先常数由 Lemma 11 的正式空间命题承担，本组的独立位级峰值核算仍为 Q3。</p>
+<h3>9.3 Failure ≤ <code>δ</code>（A）</h3>
+<p>对单个已知容量结构 <code>D(m,ℓ)</code>，第 5 节分别控制主表桶过载、fingerprint collection 超出表示预算、以及共享 <code>h_d(x)∘h_s(x)</code> 的 datapoint 过多三类事件。式 (5) 将它们并合为</p>
+<pre><code class="language-text">(m/log u)exp(-(c3-1)^2 log u/2)
++ u^{-c5}
++ m·2^{-(c4-0.01)log u}.
+</code></pre>
+<p>因 <code>m&lt;u</code>，先选择足够大的常数 <code>c3,c4,c5</code>，再选满足有限独立性要求的 <code>c1</code>，可使单个 <code>D_i</code> 整个生命周期的 failure 概率至多为 <code>u^{-2C}</code>。这是常数存在性论证，不给出未经原文支持的最小具体常数。</p>
+<p>Claim 13 在 <code>n&lt;u</code> 时最多创建 <code>⌈log u⌉</code> 个容量层，再用一次 union bound：</p>
+<pre><code class="language-text">Σ_i u^{-2C} ≤ (⌈log u⌉)u^{-2C} ≤ u^{-C}=δ,
+</code></pre>
+<p>最后一步对足够大的 <code>u</code> 和 <code>C&gt;1</code> 成立。这对应 Theorem 10 的序列级“曾报告 failure”事件。输入序列可以是任意的，概率取自预计算随机比特；本组不将原文口径无条件扩张到自适应查询对手。</p>
+<hr>
+<h2>10. 技术优越性</h2>
+<p>本文的非凡之处是<strong>组合保证</strong>，而不是某一个单项“首次”：</p>
 <table>
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
+<thead>
+<tr>
+<th>维度</th>
+<th>本文保证</th>
+<th>审慎评价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>空间</td>
+<td>主项含 <code>log(1/ε)+log log n</code>，另有低阶项和 <code>u^c</code></td>
+<td>在相应参数下与 PSW 的领先项对齐</td>
+</tr>
+<tr>
+<td>时间</td>
+<td>无 failure 时插入、查询 worst-case <code>O(1)</code></td>
+<td>比 PSW expected amortized 插入语义更强；不代表工程吞吐一定更快</td>
+</tr>
+<tr>
+<td>查询结构数</td>
+<td>只查相邻两代 <code>D/T</code></td>
+<td>避免扫描全部历史 filter</td>
+</tr>
+<tr>
+<td>扩容</td>
+<td>不需紧最终容量；后台迁移</td>
+<td>filter 丢弃原键后仍能扩容是核心难点</td>
+</tr>
+<tr>
+<td>证明</td>
+<td>连接 FP、无 FN、failure、时间和位空间</td>
+<td>定理强，但每项都有参数和概率前提</td>
+</tr>
+</tbody></table>
+<p>从技术直觉看，短串 truth table 避免把短前缀大量复制成长串；两代 <code>D/T</code> 让旧数据在迁移时仍可查询；每次插入推进常数轮工作，把昂贵重建去均摊。底层 <code>D(m,ℓ)</code> 再把 prefix matching 压到所需冗余。这些组件的组合，而非单独一张表或一个哈希技巧，支撑了论文的主要结果。</p>
+<hr>
+<h2>11. 局限性与适用范围</h2>
+<ol>
+<li><strong>无用户删除</strong>：Theorem 10 针对插入序列，不能称 fully dynamic。</li>
+<li><strong>概率有两层</strong>：<code>ε</code> 是无 failure 时的误报率，<code>u^{-C}</code> 是整段序列报告 failure 的概率；二者不是“总错误率”。</li>
+<li><strong>有参数和预计算成本</strong>：正式定理含 <code>n=ω(log u)</code>、<code>n&lt;u</code> 与输入无关的 <code>u^c</code> 位；非正式 <code>(1+o(1))</code> 还需更强展示条件。</li>
+<li><strong>固定宇宙</strong>：无需紧最终容量不等于不受宇宙 <code>[u]</code> 限制的无限增长。</li>
+<li><strong>实现复杂</strong>：多层哈希、adaptive prefixes、data blocks 和后台重组远比普通 Bloom filter 复杂；word-RAM 的 <code>O(1)</code> 不能直接解释为更高实践吞吐。</li>
+<li><strong>公开核查缺口</strong>：阶段下标形式归纳、字面常数 10 的隐藏常数配平和迁移瞬时位级峰值仍为 Q1/Q3。保留这些缺口不等于断言原论文错误。</li>
+<li><strong>对手模型</strong>：本组不把原文保证无条件扩张到自适应查询对手。</li>
+</ol>
+<hr>
+<h2>12. 后续研究</h2>
+<p>后续工作不形成一条单轴的“替代链”。Aleph 把重点放在删除、无限增长和可运行实现；Kuszmaul–Walzer 说明删除型 dynamic filter 的额外空间下界；Resizable Retrieval 把空间参数推进到当前 <code>n</code> 并支持删除，但保留不同额外项和 whp 条件。由此产生四个开放方向：</p>
+<ol>
+<li>在保留可比的最坏时间和当前规模空间时支持删除；</li>
+<li>降低或消除 <code>u^c</code> 级全局随机性/预计算项；</li>
+<li>将 Claim 13 与 §5 做成可复现实验实现，测量隐藏常数、迁移峰值与缓存行为；</li>
+<li>明确 adaptive queries/adversary 下误报与 failure 的保证。</li>
+</ol>
+<hr>
+<h2>13. 小组评价</h2>
+<p>我们认为，这篇论文最值得学习的不是某个孤立的哈希技巧，而是如何把信息论主项、当前规模空间、误报预算、无漏报、failure 概率和最坏更新时间组合起来。变长前缀解决不同插入阶段的误报预算，truth table 避免短前缀在扩展时产生过高空间开销，相邻两代 <code>D/T</code> 使查询在迁移期间仍只访问常数个结构，每插常数轮后台工作再将扩容去均摊。这些部件的配合，而非单个部件，构成论文的主要技术价值。</p>
+<p>从证明表达看，论文将许多细节压缩在黑盒接口和“easy to check”式句子中，阅读门槛很高。要让结论可核验，必须把论证拆成不同责任链：式 (2) 控制误报，Claim 13 给出迁移控制流，Lemma 11 承担 prefix matching 的空间/时间/failure 接口，第 5 节控制底层坏事件，PSW 下界则只用于评价空间的不可避免性，不参与构造正确性的推导。</p>
+<p>这篇论文的局限同样明显：它是 insertion-only 结果，依赖固定 universe、word-RAM 和 <code>u^c</code> 预计算，实现复杂度也远高于普通 Bloom filter。因此它的主要价值是在明确理论模型中展示一组强联合保证，而不是直接预测工程上的绝对吞吐量优势。本 Review 保留 Q1/Q3，是为了区分“原论文给出的正式命题”和“本组已经独立展开的验证”，而不是据此断言原结果错误。</p>
+<hr>
+<h2>14. 结论</h2>
+<p>本文不是简单的“可扩容 Bloom”，而是 unknown-size 设定下，用哈希前缀、prefix matching、短串真值表、长串 succinct 结构与分阶段去均摊迁移，逼近信息论额外 <code>log log n</code> 成本并追求最坏情况常数时间。读者应同时看到定理条件、与 PSW/工程方案的模型差异，以及本文整合稿中仍开放的下标与常数配平缺口。</p>
+<hr>
+<h2>15. 参考文献</h2>
+<ol>
+<li>M. Liu, Y. Yin, and H. Yu. <em>Succinct Filters for Sets of Unknown Sizes</em>. ICALP 2020, LIPIcs 168, 79:1–79:19. DOI: <code>10.4230/LIPIcs.ICALP.2020.79</code>.</li>
+<li>B. H. Bloom. <em>Space/Time Trade-offs in Hash Coding with Allowable Errors</em>. Communications of the ACM 13(7), 1970, 422–426. DOI: <code>10.1145/362686.362692</code>.</li>
+<li>L. Carter, R. Floyd, J. Gill, G. Markowsky, and M. N. Wegman. <em>Exact and Approximate Membership Testers</em>. STOC 1978, 59–65. DOI: <code>10.1145/800133.804332</code>.</li>
+<li>P. S. Almeida, C. Baquero, N. Preguiça, and D. Hutchison. <em>Scalable Bloom Filters</em>. Information Processing Letters 101(6), 2007, 255–261. DOI: <code>10.1016/j.ipl.2006.10.007</code>.</li>
+<li>D. Guo, J. Wu, H. Chen, and X. Luo. <em>Theory and Network Applications of Dynamic Bloom Filters</em>. IEEE INFOCOM 2006, 1–12. DOI: <code>10.1109/INFOCOM.2006.325</code>.</li>
+<li>Y. Arbitman, M. Naor, and G. Segev. <em>Backyard Cuckoo Hashing: Constant Worst-Case Operations with a Succinct Representation</em>. FOCS 2010, 787–796.</li>
+<li>E. D. Demaine, F. Meyer auf der Heide, R. Pagh, and M. Pătrașcu. <em>De Dictionariis Dynamicis Pauco Spatio Utentibus</em>. LATIN 2006, 349–361. DOI: <code>10.1007/11682462_34</code>.</li>
+<li>A. Pagh, R. Pagh, and S. S. Rao. <em>An Optimal Bloom Filter Replacement</em>. SODA 2005, 823–829. DOI: <code>10.1145/1070432.1070548</code>.</li>
+<li>R. Pagh, G. Segev, and U. Wieder. <em>How to Approximate a Set Without Knowing Its Size in Advance</em>. FOCS 2013, 80–89. DOI: <code>10.1109/FOCS.2013.17</code>.</li>
+<li>R. Raman and S. S. Rao. <em>Succinct Dynamic Dictionaries and Trees</em>. ICALP 2003, 357–368. DOI: <code>10.1007/3-540-45061-0_30</code>.</li>
+<li>M. A. Bender et al. <em>Don&#39;t Thrash: How to Cache Your Hash on Flash</em>. PVLDB 5(11), 2012, 1627–1637. DOI: <code>10.14778/2350229.2350275</code>.</li>
+<li>B. Fan, D. G. Andersen, M. Kaminsky, and M. D. Mitzenmacher. <em>Cuckoo Filter: Practically Better Than Bloom</em>. CoNEXT 2014, 75–88. DOI: <code>10.1145/2674005.2674994</code>.</li>
+<li>N. Dayan, I.-O. Bercea, and R. Pagh. <em>Aleph Filter: To Infinity in Constant Time</em>. PVLDB 17(11), 2024, 3644–3656. DOI: <code>10.14778/3681954.3682027</code>.</li>
+<li>W. Kuszmaul and S. Walzer. <em>Space Lower Bounds for Dynamic Filters and Value-Dynamic Retrieval</em>. STOC 2024, 1153–1164. DOI: <code>10.1145/3618260.3649649</code>.</li>
+<li>W. Kuszmaul, A. Putterman, T. Xu, H. Zhou, and R. Zhou. <em>Resizable Retrieval</em>. arXiv:2606.15944, 2026 预印本（截至 2026-07-28 未核实正式发表）.</li>
+</ol>
+<p>完整 BibTeX 元数据见 <code>references/bibliography.bib</code>；正文引用、原文位置、证据等级和限制见 <code>references/citation-audit.md</code>。E1/E2 候选仅保留在研究矩阵，未在本节承担确定性比较。</p>
+<hr>
+<h2>附录 A. 开放问题（带入 Day 7）</h2>
+<table>
 <thead>
 <tr>
 <th>ID</th>
@@ -563,8 +411,7 @@ arXiv:2004.12465；Pagh–Segev–Wieder FOCS 2013（仓库
 <th>正文处理</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>issue-stage-index</td>
 <td><code>i★</code> vs 半开区间存储归纳</td>
 <td>操作跟 <code>i★</code>；不声称归纳已证</td>
@@ -584,14 +431,8 @@ arXiv:2004.12465；Pagh–Segev–Wieder FOCS 2013（仓库
 <td>迁移瞬时位级</td>
 <td>量级 O(n) 层；位级开放</td>
 </tr>
-<tr>
-<td>A/C 章节</td>
-<td>Day 5 定稿未入库</td>
-<td>桥接段待替换</td>
-</tr>
-</tbody>
-</table>
-<h2 id="附录-b.-整合贡献过程">附录 B. 整合贡献（过程）</h2>
+</tbody></table>
+<h2>附录 B. 整合贡献（过程）</h2>
 <table>
 <thead>
 <tr>
@@ -599,24 +440,21 @@ arXiv:2004.12465；Pagh–Segev–Wieder FOCS 2013（仓库
 <th>主整合</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>§6–§9（技术/实现/正确性/时间）及贯穿示例、图同步</td>
 <td>B</td>
 </tr>
 <tr>
 <td>§1–§3、§5、§9 空间/failure 精算</td>
-<td>A（待替换桥接）</td>
+<td>A</td>
 </tr>
 <tr>
 <td>§4、§10–§12、§15</td>
-<td>C（待替换桥接）</td>
+<td>C</td>
 </tr>
 <tr>
 <td>§13–§14</td>
 <td>共同</td>
 </tr>
-</tbody>
-</table>
-</body>
-</html>
+</tbody></table>
+</body></html>

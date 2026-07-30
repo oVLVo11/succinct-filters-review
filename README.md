@@ -19,7 +19,7 @@
 
 交叉审阅：A 审 B 的伪代码和复杂度；B 审 A 的概率/空间推导；C 审 A+B 的证据可追溯性；A+B 核查 C 的模型可比性。
 
-## 当前进度（Day 4 整合）
+## 当前进度（Day 6 定稿回填）
 
 已完成：
 
@@ -30,8 +30,11 @@
 - 第二轮审阅与会议：`discussions/review-day4*.md`、`discussions/meeting-day4.md`
 - 三人 AI 使用日志：`ai-usage/`
 - Day 4 三人材料整合提纲：`drafts/outline-v1.md`
+- A/B/C 三章与整合定稿：`drafts/section-A-problem-and-significance.md`、`drafts/section-B-core-technique.md`、`drafts/section-C-related-work-and-evaluation.md`、`drafts/review-integrated.md`
+- 历史中间产物：`drafts/review-integrated-v1.html`、`drafts/review-integrated-v1.pdf`（保留生成轨迹，不作为最终提交版）
+- 最终提交版 PDF：`output/pdf/succinct-filters-review-final.pdf`（正式封面、连续页码、编号引用和完整参考文献）
 
-仍未关闭：
+已转化为正文限制、而非成员待办：
 
 - Claim 13 的阶段下标与存储归纳；
 - 原文字面常数 10 的隐藏常数配平；
@@ -75,6 +78,6 @@ ai-usage/                    三位成员的 AI 使用及人工核查记录
 - AI 只用于定位、解释、列核查问题和检查逻辑；每次使用须在 `ai-usage/` 写明原问题、回答摘要、人工核查来源和采用边界。
 - 最终 Review 由成员本人阅读原文后撰写。每位成员必须能解释核心论点、负责内容、主要参考文献、修改过程和 AI 使用情况。
 
-## 下一阶段
+## 最终状态
 
-Day 5 可在现有证据基础上分别起草“问题与重要性”“核心技术与实现”“相关研究与评价”，但所有 Q1/Q3 项须保留引用和限制条件。建议先由三位成员分别人工审核自己的 Day 4 产物，再形成分阶段 commit 与交叉 review。
+项目源稿、过程材料、引用审计和最终 PDF 均已定稿。经小组决定，Day 7 口头交流与最终签字/审阅不再形成仓库文件；仓库不补写或模拟这些活动。Q1/Q3 继续作为正文中的公开技术限制保留，不属于待成员完成的文件工作。
